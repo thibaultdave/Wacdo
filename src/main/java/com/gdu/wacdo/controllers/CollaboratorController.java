@@ -1,5 +1,7 @@
 package com.gdu.wacdo.controllers;
 
+import com.gdu.wacdo.dto.CollaboratorRequestDTO;
+import com.gdu.wacdo.dto.CollaboratorResponseDTO;
 import com.gdu.wacdo.entities.Collaborator;
 import com.gdu.wacdo.services.CollaboratorService;
 import org.springframework.web.bind.annotation.*;
@@ -17,21 +19,23 @@ public class CollaboratorController {
     }
 
     @GetMapping
-    public List<Collaborator> findAll() {
+    public List<CollaboratorResponseDTO> findAll() {
         return collaboratorService.findAll();
     }
 
     @GetMapping("/{id}")
-    public Collaborator findById(@PathVariable Long id) {
-        return collaboratorService.findById(id)
-                .orElseThrow(() -> new RuntimeException(
-                        "Collaborateur introuvable avec l'id : " + id
-                ));
+    public CollaboratorResponseDTO findById(@PathVariable Long id) {
+        return collaboratorService.findById(id);
     }
 
     @PostMapping
-    public Collaborator save(@RequestBody Collaborator collaborator) {
-        return collaboratorService.save(collaborator);
+    public CollaboratorResponseDTO create(@RequestBody CollaboratorRequestDTO dto) {
+        return collaboratorService.create(dto);
+    }
+
+    @PutMapping("/{id}")
+    public CollaboratorResponseDTO update(@PathVariable Long id, @RequestBody CollaboratorRequestDTO dto) {
+        return collaboratorService.update(id, dto);
     }
 
     @DeleteMapping("/{id}")

@@ -1,11 +1,12 @@
 package com.gdu.wacdo.services;
 
+import com.gdu.wacdo.dto.CollaboratorRequestDTO;
+import com.gdu.wacdo.dto.CollaboratorResponseDTO;
 import com.gdu.wacdo.entities.Collaborator;
 import com.gdu.wacdo.repositories.CollaboratorRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CollaboratorService {
@@ -16,19 +17,81 @@ public class CollaboratorService {
         this.collaboratorRepository = collaboratorRepository;
     }
 
-    public List<Collaborator> findAll() {
-        return collaboratorRepository.findAll();
+    public List<CollaboratorResponseDTO> findAll() {
+        return collaboratorRepository.findAll()
+                .stream()
+                .map(this::toResponseDTO)
+                .toList();
     }
 
-    public Optional<Collaborator> findById(Long id) {
-        return collaboratorRepository.findById(id);
+    public Collaborator findCollaboratorById(Long id) {
+        return collaboratorRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException(
+                        "Collaborateur introuvable avec l'id : " + id
+                ));
     }
 
-    public Collaborator save(Collaborator collaborator) {
-        return collaboratorRepository.save(collaborator);
+    public CollaboratorResponseDTO findById(Long id) {
+        return toResponseDTO(findCollaboratorById(id));
+    }
+
+    public CollaboratorResponseDTO create(CollaboratorRequestDTO dto) {
+
+        Collaborator collaborator = toEntity(dto);
+        Collaborator createdCollaborator = collaboratorRepository.save(collaborator);
+
+        return toResponseDTO(createdCollaborator);
+    }
+
+    public CollaboratorResponseDTO update(Long id, CollaboratorRequestDTO dto) {
+
+        Collaborator collaborator = findCollaboratorById(id);
+
+        Collaborator updatedCollaborator = collaboratorRepository.save(
+                setCollaboratorFromRequest(collaborator, dto)
+        );
+
+        return toResponseDTO(updatedCollaborator);
     }
 
     public void deleteById(Long id) {
+        if (!collaboratorRepository.existsById(id)) {
+            throw new RuntimeException(
+                    "Collaborateur introuvable avec l'id : " + id
+            );
+        }
+
         collaboratorRepository.deleteById(id);
+    }
+
+    // DTO METHODS
+
+    private CollaboratorResponseDTO toResponseDTO(Collaborator collaborator) {
+        CollaboratorResponseDTO dto = new CollaboratorResponseDTO();
+
+        dto.setId(collaborator.getId());
+        dto.setName(collaborator.getName());
+        dto.setFirstName(collaborator.getFirstName());
+        dto.setEmail(collaborator.getEmail());
+        dto.setFirstHireDate(collaborator.getFirstHireDate());
+        dto.setAdmin(collaborator.isAdmin());
+
+        return dto;
+    }
+
+    private Collaborator toEntity(CollaboratorRequestDTO dto) {
+        Collaborator collaborator = new Collaborator();
+
+        return setCollaboratorFromRequest(collaborator, dto);
+    }
+
+    private Collaborator setCollaboratorFromRequest(Collaborator collaborator, CollaboratorRequestDTO dto) {
+        collaborator.setName(dto.getName());
+        collaborator.setFirstName(dto.getFirstName());
+        collaborator.setEmail(dto.getEmail());
+        collaborator.setFirstHireDate(dto.getFirstHireDate());
+        collaborator.setAdmin(dto.isAdmin());
+        collaborator.setPassword(dto.getPassword());
+        return collaborator;
     }
 }
