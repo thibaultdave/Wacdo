@@ -47,7 +47,6 @@ public class CollaboratorService {
     public CollaboratorResponseDTO update(Long id, CollaboratorRequestDTO dto) {
 
         Collaborator collaborator = findCollaboratorById(id);
-
         Collaborator updatedCollaborator = collaboratorRepository.save(
                 setCollaboratorFromRequest(collaborator, dto)
         );

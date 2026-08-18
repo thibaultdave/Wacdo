@@ -1,6 +1,7 @@
 package com.gdu.wacdo.controllers;
 
-import com.gdu.wacdo.entities.Assignment;
+import com.gdu.wacdo.dto.AssignmentRequestDTO;
+import com.gdu.wacdo.dto.AssignmentResponseDTO;
 import com.gdu.wacdo.services.AssignmentService;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,21 +18,22 @@ public class AssignmentController {
     }
 
     @GetMapping
-    public List<Assignment> findAll() {
+    public List<AssignmentResponseDTO> findAll() {
         return assignmentService.findAll();
     }
 
     @GetMapping("/{id}")
-    public Assignment findById(@PathVariable Long id) {
-        return assignmentService.findById(id)
-                .orElseThrow(() -> new RuntimeException(
-                        "Collaborateur introuvable avec l'id : " + id
-                ));
+    public AssignmentResponseDTO findById(@PathVariable Long id) {
+        return assignmentService.findById(id);
     }
 
     @PostMapping
-    public Assignment save(@RequestBody Assignment assignment) {
-        return assignmentService.save(assignment);
+    public AssignmentResponseDTO create(@RequestBody AssignmentRequestDTO dto) {
+        return assignmentService.create(dto);
+    }
+    @PutMapping("/{id}")
+    public AssignmentResponseDTO update(@PathVariable Long id, @RequestBody AssignmentRequestDTO dto) {
+        return assignmentService.update(id, dto);
     }
 
     @DeleteMapping("/{id}")

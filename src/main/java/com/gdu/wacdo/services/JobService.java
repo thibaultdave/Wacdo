@@ -46,10 +46,9 @@ public class JobService {
 
     public JobResponseDTO update(Long id, JobRequestDTO dto) {
 
-        Job collaborator = findJobById(id);
-
+        Job job = findJobById(id);
         Job updatedJob = jobRepository.save(
-                setJobFromRequest(collaborator, dto)
+                setJobFromRequest(job, dto)
         );
 
         return toResponseDTO(updatedJob);

@@ -1,6 +1,7 @@
 package com.gdu.wacdo.controllers;
 
-import com.gdu.wacdo.entities.Restaurant;
+import com.gdu.wacdo.dto.RestaurantRequestDTO;
+import com.gdu.wacdo.dto.RestaurantResponseDTO;
 import com.gdu.wacdo.services.RestaurantService;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,21 +18,23 @@ public class RestaurantController {
     }
 
     @GetMapping
-    public List<Restaurant> findAll() {
+    public List<RestaurantResponseDTO> findAll() {
         return restaurantService.findAll();
     }
 
     @GetMapping("/{id}")
-    public Restaurant findById(@PathVariable Long id) {
-        return restaurantService.findById(id)
-                .orElseThrow(() -> new RuntimeException(
-                        "Collaborateur introuvable avec l'id : " + id
-                ));
+    public RestaurantResponseDTO findById(@PathVariable Long id) {
+        return restaurantService.findById(id);
     }
 
     @PostMapping
-    public Restaurant save(@RequestBody Restaurant restaurant) {
-        return restaurantService.save(restaurant);
+    public RestaurantResponseDTO create(@RequestBody RestaurantRequestDTO dto) {
+        return restaurantService.create(dto);
+    }
+
+    @PutMapping("/{id}")
+    public RestaurantResponseDTO update(@PathVariable Long id, @RequestBody RestaurantRequestDTO dto) {
+        return restaurantService.update(id, dto);
     }
 
     @DeleteMapping("/{id}")
