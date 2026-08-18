@@ -1,6 +1,7 @@
 package com.gdu.wacdo.controllers;
 
-import com.gdu.wacdo.entities.Job;
+import com.gdu.wacdo.dto.JobRequestDTO;
+import com.gdu.wacdo.dto.JobResponseDTO;
 import com.gdu.wacdo.services.JobService;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,21 +18,23 @@ public class JobController {
     }
 
     @GetMapping
-    public List<Job> findAll() {
+    public List<JobResponseDTO> findAll() {
         return jobService.findAll();
     }
 
     @GetMapping("/{id}")
-    public Job findById(@PathVariable Long id) {
-        return jobService.findById(id)
-                .orElseThrow(() -> new RuntimeException(
-                        "Collaborateur introuvable avec l'id : " + id
-                ));
+    public JobResponseDTO findById(@PathVariable Long id) {
+        return jobService.findById(id);
     }
 
     @PostMapping
-    public Job save(@RequestBody Job job) {
-        return jobService.save(job);
+    public JobResponseDTO create(@RequestBody JobRequestDTO dto) {
+        return jobService.create(dto);
+    }
+
+    @PutMapping("/{id}")
+    public JobResponseDTO update(@PathVariable Long id, @RequestBody JobRequestDTO dto) {
+        return jobService.update(id, dto);
     }
 
     @DeleteMapping("/{id}")

@@ -2,7 +2,6 @@ package com.gdu.wacdo.controllers;
 
 import com.gdu.wacdo.dto.CollaboratorRequestDTO;
 import com.gdu.wacdo.dto.CollaboratorResponseDTO;
-import com.gdu.wacdo.entities.Collaborator;
 import com.gdu.wacdo.services.CollaboratorService;
 import org.springframework.web.bind.annotation.*;
 

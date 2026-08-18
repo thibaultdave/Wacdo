@@ -4,6 +4,7 @@ import com.gdu.wacdo.dto.CollaboratorRequestDTO;
 import com.gdu.wacdo.dto.CollaboratorResponseDTO;
 import com.gdu.wacdo.entities.Collaborator;
 import com.gdu.wacdo.repositories.CollaboratorRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -67,16 +68,9 @@ public class CollaboratorService {
     // DTO METHODS
 
     private CollaboratorResponseDTO toResponseDTO(Collaborator collaborator) {
-        CollaboratorResponseDTO dto = new CollaboratorResponseDTO();
+        ModelMapper modelMapper = new ModelMapper();
 
-        dto.setId(collaborator.getId());
-        dto.setName(collaborator.getName());
-        dto.setFirstName(collaborator.getFirstName());
-        dto.setEmail(collaborator.getEmail());
-        dto.setFirstHireDate(collaborator.getFirstHireDate());
-        dto.setAdmin(collaborator.isAdmin());
-
-        return dto;
+        return modelMapper.map(collaborator, CollaboratorResponseDTO.class);
     }
 
     private Collaborator toEntity(CollaboratorRequestDTO dto) {
@@ -86,12 +80,13 @@ public class CollaboratorService {
     }
 
     private Collaborator setCollaboratorFromRequest(Collaborator collaborator, CollaboratorRequestDTO dto) {
-        collaborator.setName(dto.getName());
-        collaborator.setFirstName(dto.getFirstName());
-        collaborator.setEmail(dto.getEmail());
-        collaborator.setFirstHireDate(dto.getFirstHireDate());
-        collaborator.setAdmin(dto.isAdmin());
-        collaborator.setPassword(dto.getPassword());
-        return collaborator;
+        ModelMapper modelMapper = new ModelMapper();
+//        collaborator.setName(dto.getName());
+//        collaborator.setFirstName(dto.getFirstName());
+//        collaborator.setEmail(dto.getEmail());
+//        collaborator.setFirstHireDate(dto.getFirstHireDate());
+//        collaborator.setAdmin(dto.isAdmin());
+//        collaborator.setPassword(dto.getPassword());
+        return modelMapper.map(dto, Collaborator.class);
     }
 }
