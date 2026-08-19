@@ -40,8 +40,7 @@ public class JobService {
 
     public JobResponseDTO create(JobRequestDTO dto) {
 
-        Job job = toEntity(dto);
-        Job createdJob = jobRepository.save(job);
+        Job createdJob = jobRepository.save(toEntity(dto));
 
         return toResponseDTO(createdJob);
     }
@@ -83,6 +82,8 @@ public class JobService {
     private Job setJobFromRequest(Job job, JobRequestDTO dto) {
         ModelMapper modelMapper = new ModelMapper();
 
-        return modelMapper.map(dto, Job.class);
+        modelMapper.map(dto, job);
+
+        return job;
     }
 }

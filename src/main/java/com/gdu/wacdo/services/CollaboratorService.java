@@ -40,8 +40,7 @@ public class CollaboratorService {
 
     public CollaboratorResponseDTO create(CollaboratorRequestDTO dto) {
 
-        Collaborator collaborator = toEntity(dto);
-        Collaborator createdCollaborator = collaboratorRepository.save(collaborator);
+        Collaborator createdCollaborator = collaboratorRepository.save(toEntity(dto));
 
         return toResponseDTO(createdCollaborator);
     }
@@ -83,6 +82,8 @@ public class CollaboratorService {
     private Collaborator setCollaboratorFromRequest(Collaborator collaborator, CollaboratorRequestDTO dto) {
         ModelMapper modelMapper = new ModelMapper();
 
-        return modelMapper.map(dto, Collaborator.class);
+        modelMapper.map(dto, collaborator);
+
+        return collaborator;
     }
 }

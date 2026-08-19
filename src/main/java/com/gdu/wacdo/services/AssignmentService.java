@@ -56,8 +56,7 @@ public class AssignmentService {
 
     public AssignmentResponseDTO create(AssignmentRequestDTO dto) {
 
-        Assignment assignment = toEntity(dto);
-        Assignment createdAssignment = assignmentRepository.save(assignment);
+        Assignment createdAssignment = assignmentRepository.save(toEntity(dto));
 
         return toResponseDTO(createdAssignment);
     }
@@ -120,7 +119,7 @@ public class AssignmentService {
                         ExceptionMessages.JOB_NOT_FOUND, dto.getJobId()
                 ));
 
-        assignment = modelMapper.map(dto, Assignment.class);
+        modelMapper.map(dto, assignment);
         assignment.setCollaborator(collaborator);
         assignment.setRestaurant(restaurant);
         assignment.setJob(job);

@@ -40,8 +40,7 @@ public class RestaurantService {
 
     public RestaurantResponseDTO create(RestaurantRequestDTO dto) {
 
-        Restaurant restaurant = toEntity(dto);
-        Restaurant createdRestaurant = restaurantRepository.save(restaurant);
+        Restaurant createdRestaurant = restaurantRepository.save(toEntity(dto));
 
         return toResponseDTO(createdRestaurant);
     }
@@ -83,6 +82,8 @@ public class RestaurantService {
     private Restaurant setRestaurantFromRequest(Restaurant restaurant, RestaurantRequestDTO dto) {
         ModelMapper modelMapper = new ModelMapper();
 
-        return modelMapper.map(dto, Restaurant.class);
+        modelMapper.map(dto, restaurant);
+
+        return restaurant;
     }
 }

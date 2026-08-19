@@ -4,6 +4,7 @@ public final class ExceptionMessages {
 
     private ExceptionMessages() {}
 
+    // RESOURCE NOT FOUND
     public static final String COLLABORATOR_NOT_FOUND = "No collaborator found with id : ";
     public static final String RESTAURANT_NOT_FOUND = "No restaurant found with id : ";
     public static final String JOB_NOT_FOUND = "No job found with id : ";
