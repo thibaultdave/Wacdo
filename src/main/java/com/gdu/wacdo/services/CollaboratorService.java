@@ -1,8 +1,10 @@
 package com.gdu.wacdo.services;
 
+import com.gdu.wacdo.constants.ExceptionMessages;
 import com.gdu.wacdo.dto.CollaboratorRequestDTO;
 import com.gdu.wacdo.dto.CollaboratorResponseDTO;
 import com.gdu.wacdo.entities.Collaborator;
+import com.gdu.wacdo.exceptions.ResourceNotFoundException;
 import com.gdu.wacdo.repositories.CollaboratorRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -27,8 +29,8 @@ public class CollaboratorService {
 
     public Collaborator findCollaboratorById(Long id) {
         return collaboratorRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException(
-                        "Collaborateur introuvable avec l'id : " + id
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        ExceptionMessages.COLLABORATOR_NOT_FOUND, id
                 ));
     }
 
@@ -56,8 +58,8 @@ public class CollaboratorService {
 
     public void deleteById(Long id) {
         if (!collaboratorRepository.existsById(id)) {
-            throw new RuntimeException(
-                    "Collaborateur introuvable avec l'id : " + id
+            throw new ResourceNotFoundException(
+                    ExceptionMessages.COLLABORATOR_NOT_FOUND, id
             );
         }
 
@@ -80,12 +82,7 @@ public class CollaboratorService {
 
     private Collaborator setCollaboratorFromRequest(Collaborator collaborator, CollaboratorRequestDTO dto) {
         ModelMapper modelMapper = new ModelMapper();
-//        collaborator.setName(dto.getName());
-//        collaborator.setFirstName(dto.getFirstName());
-//        collaborator.setEmail(dto.getEmail());
-//        collaborator.setFirstHireDate(dto.getFirstHireDate());
-//        collaborator.setAdmin(dto.isAdmin());
-//        collaborator.setPassword(dto.getPassword());
+
         return modelMapper.map(dto, Collaborator.class);
     }
 }

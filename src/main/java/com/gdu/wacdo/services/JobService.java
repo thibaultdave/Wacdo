@@ -1,8 +1,10 @@
 package com.gdu.wacdo.services;
 
+import com.gdu.wacdo.constants.ExceptionMessages;
 import com.gdu.wacdo.dto.JobRequestDTO;
 import com.gdu.wacdo.dto.JobResponseDTO;
 import com.gdu.wacdo.entities.Job;
+import com.gdu.wacdo.exceptions.ResourceNotFoundException;
 import com.gdu.wacdo.repositories.JobRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -27,8 +29,8 @@ public class JobService {
 
     public Job findJobById(Long id) {
         return jobRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException(
-                        "Fonction introuvable avec l'id : " + id
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        ExceptionMessages.JOB_NOT_FOUND, id
                 ));
     }
 
@@ -56,8 +58,8 @@ public class JobService {
 
     public void deleteById(Long id) {
         if (!jobRepository.existsById(id)) {
-            throw new RuntimeException(
-                    "Fonction introuvable avec l'id : " + id
+            throw new ResourceNotFoundException(
+                    ExceptionMessages.JOB_NOT_FOUND, id
             );
         }
 

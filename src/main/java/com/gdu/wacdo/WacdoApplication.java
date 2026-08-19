@@ -11,3 +11,6 @@ public class WacdoApplication {
 	}
 
 }
+
+// https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/validation/BindingResult.html
+// https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-controller/ann-methods/modelattrib-method-args.html

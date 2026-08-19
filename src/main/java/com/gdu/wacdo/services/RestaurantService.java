@@ -1,8 +1,10 @@
 package com.gdu.wacdo.services;
 
+import com.gdu.wacdo.constants.ExceptionMessages;
 import com.gdu.wacdo.dto.RestaurantRequestDTO;
 import com.gdu.wacdo.dto.RestaurantResponseDTO;
 import com.gdu.wacdo.entities.Restaurant;
+import com.gdu.wacdo.exceptions.ResourceNotFoundException;
 import com.gdu.wacdo.repositories.RestaurantRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -27,8 +29,8 @@ public class RestaurantService {
 
     public Restaurant findRestaurantById(Long id) {
         return restaurantRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException(
-                        "Restaurant introuvable avec l'id : " + id
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        ExceptionMessages.RESTAURANT_NOT_FOUND, id
                 ));
     }
 
@@ -56,8 +58,8 @@ public class RestaurantService {
 
     public void deleteById(Long id) {
         if (!restaurantRepository.existsById(id)) {
-            throw new RuntimeException(
-                    "Restaurant introuvable avec l'id : " + id
+            throw new ResourceNotFoundException(
+                    ExceptionMessages.RESTAURANT_NOT_FOUND, id
             );
         }
 
