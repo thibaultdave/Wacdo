@@ -15,9 +15,11 @@ import java.util.List;
 public class RestaurantService {
 
     private final RestaurantRepository restaurantRepository;
+    private final ModelMapper modelMapper;
 
-    public RestaurantService(RestaurantRepository restaurantRepository) {
+    public RestaurantService(RestaurantRepository restaurantRepository, ModelMapper modelMapper) {
         this.restaurantRepository = restaurantRepository;
+        this.modelMapper = modelMapper;
     }
 
     public List<RestaurantResponseDTO> findAll() {
@@ -68,8 +70,6 @@ public class RestaurantService {
     // DTO METHODS
 
     private RestaurantResponseDTO toResponseDTO(Restaurant restaurant) {
-        ModelMapper modelMapper = new ModelMapper();
-
         return modelMapper.map(restaurant, RestaurantResponseDTO.class);
     }
 
@@ -80,8 +80,6 @@ public class RestaurantService {
     }
 
     private Restaurant setRestaurantFromRequest(Restaurant restaurant, RestaurantRequestDTO dto) {
-        ModelMapper modelMapper = new ModelMapper();
-
         modelMapper.map(dto, restaurant);
 
         return restaurant;

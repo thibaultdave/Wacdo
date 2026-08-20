@@ -15,9 +15,11 @@ import java.util.List;
 public class CollaboratorService {
 
     private final CollaboratorRepository collaboratorRepository;
+    private final ModelMapper modelMapper;
 
-    public CollaboratorService(CollaboratorRepository collaboratorRepository) {
+    public CollaboratorService(CollaboratorRepository collaboratorRepository, ModelMapper modelMapper) {
         this.collaboratorRepository = collaboratorRepository;
+        this.modelMapper = modelMapper;
     }
 
     public List<CollaboratorResponseDTO> findAll() {
@@ -68,8 +70,6 @@ public class CollaboratorService {
     // DTO METHODS
 
     private CollaboratorResponseDTO toResponseDTO(Collaborator collaborator) {
-        ModelMapper modelMapper = new ModelMapper();
-
         return modelMapper.map(collaborator, CollaboratorResponseDTO.class);
     }
 
@@ -80,8 +80,6 @@ public class CollaboratorService {
     }
 
     private Collaborator setCollaboratorFromRequest(Collaborator collaborator, CollaboratorRequestDTO dto) {
-        ModelMapper modelMapper = new ModelMapper();
-
         modelMapper.map(dto, collaborator);
 
         return collaborator;

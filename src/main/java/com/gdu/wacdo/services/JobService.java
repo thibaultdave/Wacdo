@@ -15,9 +15,11 @@ import java.util.List;
 public class JobService {
 
     private final JobRepository jobRepository;
+    private final ModelMapper modelMapper;
 
-    public JobService(JobRepository jobRepository) {
+    public JobService(JobRepository jobRepository, ModelMapper modelMapper) {
         this.jobRepository = jobRepository;
+        this.modelMapper = modelMapper;
     }
 
     public List<JobResponseDTO> findAll() {
@@ -68,8 +70,6 @@ public class JobService {
     // DTO METHODS
 
     private JobResponseDTO toResponseDTO(Job job) {
-        ModelMapper modelMapper = new ModelMapper();
-
         return modelMapper.map(job, JobResponseDTO.class);
     }
 
@@ -80,8 +80,6 @@ public class JobService {
     }
 
     private Job setJobFromRequest(Job job, JobRequestDTO dto) {
-        ModelMapper modelMapper = new ModelMapper();
-
         modelMapper.map(dto, job);
 
         return job;
