@@ -8,6 +8,7 @@ import com.gdu.wacdo.exceptions.ResourceNotFoundException;
 import com.gdu.wacdo.mappers.DTOMapper;
 import com.gdu.wacdo.repositories.CollaboratorRepository;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,14 +19,18 @@ public class CollaboratorService {
     private final CollaboratorRepository collaboratorRepository;
     private final ModelMapper modelMapper;
     private final DTOMapper dtoMapper;
+    private final PasswordEncoder passwordEncoder;
 
     public CollaboratorService(
             CollaboratorRepository collaboratorRepository,
             ModelMapper modelMapper,
-            DTOMapper dtoMapper) {
+            DTOMapper dtoMapper,
+            PasswordEncoder passwordEncoder
+            ) {
         this.collaboratorRepository = collaboratorRepository;
         this.modelMapper = modelMapper;
         this.dtoMapper = dtoMapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<CollaboratorResponseDTO> findAll() {
@@ -48,7 +53,15 @@ public class CollaboratorService {
 
     public CollaboratorResponseDTO create(CollaboratorRequestDTO dto) {
 
-        Collaborator createdCollaborator = collaboratorRepository.save(toEntity(dto));
+        Collaborator collaborator = new Collaborator();
+
+        modelMapper.map(dto, collaborator);
+
+        collaborator.setPassword(
+                passwordEncoder.encode(dto.getPassword())
+        );
+
+        Collaborator createdCollaborator = collaboratorRepository.save(collaborator);
 
         return toResponseDTO(createdCollaborator);
     }
@@ -87,6 +100,14 @@ public class CollaboratorService {
 
     private Collaborator setCollaboratorFromRequest(Collaborator collaborator, CollaboratorRequestDTO dto) {
         modelMapper.map(dto, collaborator);
+
+        if (dto.getPassword() != null
+                && !dto.getPassword().isBlank()) {
+
+            collaborator.setPassword(
+                    passwordEncoder.encode(dto.getPassword())
+            );
+        }
 
         return collaborator;
     }

@@ -9,5 +9,8 @@ public final class ExceptionMessages {
     public static final String RESTAURANT_NOT_FOUND = "No restaurant found with id : ";
     public static final String JOB_NOT_FOUND = "No job found with id : ";
     public static final String ASSIGNMENT_NOT_FOUND = "No assignment found with id : ";
+
+    // EMAIL NOT FOUND
+    public static final String EMAIL_NOT_FOUND = "No collaborator found with email : ";
 }
 // TODO See to make a message.properties
