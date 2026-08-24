@@ -2,15 +2,11 @@ package com.gdu.wacdo.dto;
 
 import lombok.Data;
 
-import java.util.List;
-
 @Data
-public class RestaurantResponseDTO {
+public class RestaurantSummaryDTO {
     private Long id;
     private String name;
     private String address;
     private String postalCode;
     private String city;
-
-    private List<AssignmentResponseDTO> assignments;
 }

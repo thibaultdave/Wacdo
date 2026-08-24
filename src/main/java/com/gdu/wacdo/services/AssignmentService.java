@@ -8,8 +8,8 @@ import com.gdu.wacdo.entities.Collaborator;
 import com.gdu.wacdo.entities.Job;
 import com.gdu.wacdo.entities.Restaurant;
 import com.gdu.wacdo.exceptions.ResourceNotFoundException;
+import com.gdu.wacdo.mappers.DTOMapper;
 import com.gdu.wacdo.repositories.AssignmentRepository;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,19 +21,19 @@ public class AssignmentService {
     private final CollaboratorService collaboratorService;
     private final RestaurantService restaurantService;
     private final JobService jobService;
-    private final ModelMapper modelMapper;
+    private final DTOMapper dtoMapper;
 
     public AssignmentService(AssignmentRepository assignmentRepository,
                              CollaboratorService collaboratorService,
                              RestaurantService restaurantService,
                              JobService jobService,
-                             ModelMapper modelMapper
+                             DTOMapper dtoMapper
     ) {
         this.assignmentRepository = assignmentRepository;
         this.collaboratorService = collaboratorService;
         this.restaurantService = restaurantService;
         this.jobService = jobService;
-        this.modelMapper = modelMapper;
+        this.dtoMapper = dtoMapper;
     }
 
     public List<AssignmentResponseDTO> findAll() {
@@ -84,13 +84,7 @@ public class AssignmentService {
     // DTO METHODS
 
     private AssignmentResponseDTO toResponseDTO(Assignment assignment) {
-
-        AssignmentResponseDTO responseDTO = modelMapper.map(assignment, AssignmentResponseDTO.class);
-        responseDTO.setCollaboratorId(assignment.getCollaborator().getId());
-        responseDTO.setRestaurantId(assignment.getRestaurant().getId());
-        responseDTO.setJobId(assignment.getJob().getId());
-
-        return responseDTO;
+        return dtoMapper.toAssignmentResponseDTO(assignment);
     }
 
     private Assignment toEntity(AssignmentRequestDTO dto) {
@@ -104,10 +98,11 @@ public class AssignmentService {
         Restaurant restaurant = restaurantService.findRestaurantById(dto.getRestaurantId());
         Job job = jobService.findJobById(dto.getJobId());
 
-        modelMapper.map(dto, assignment);
         assignment.setCollaborator(collaborator);
         assignment.setRestaurant(restaurant);
         assignment.setJob(job);
+        assignment.setStartDate(dto.getStartDate());
+        assignment.setEndDate(dto.getEndDate());
 
         return assignment;
     }

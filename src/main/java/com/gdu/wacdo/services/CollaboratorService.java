@@ -5,6 +5,7 @@ import com.gdu.wacdo.dto.CollaboratorRequestDTO;
 import com.gdu.wacdo.dto.CollaboratorResponseDTO;
 import com.gdu.wacdo.entities.Collaborator;
 import com.gdu.wacdo.exceptions.ResourceNotFoundException;
+import com.gdu.wacdo.mappers.DTOMapper;
 import com.gdu.wacdo.repositories.CollaboratorRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -16,10 +17,15 @@ public class CollaboratorService {
 
     private final CollaboratorRepository collaboratorRepository;
     private final ModelMapper modelMapper;
+    private final DTOMapper dtoMapper;
 
-    public CollaboratorService(CollaboratorRepository collaboratorRepository, ModelMapper modelMapper) {
+    public CollaboratorService(
+            CollaboratorRepository collaboratorRepository,
+            ModelMapper modelMapper,
+            DTOMapper dtoMapper) {
         this.collaboratorRepository = collaboratorRepository;
         this.modelMapper = modelMapper;
+        this.dtoMapper = dtoMapper;
     }
 
     public List<CollaboratorResponseDTO> findAll() {
@@ -70,7 +76,7 @@ public class CollaboratorService {
     // DTO METHODS
 
     private CollaboratorResponseDTO toResponseDTO(Collaborator collaborator) {
-        return modelMapper.map(collaborator, CollaboratorResponseDTO.class);
+        return dtoMapper.toCollaboratorResponseDTO(collaborator);
     }
 
     private Collaborator toEntity(CollaboratorRequestDTO dto) {

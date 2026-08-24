@@ -5,6 +5,7 @@ import com.gdu.wacdo.dto.RestaurantRequestDTO;
 import com.gdu.wacdo.dto.RestaurantResponseDTO;
 import com.gdu.wacdo.entities.Restaurant;
 import com.gdu.wacdo.exceptions.ResourceNotFoundException;
+import com.gdu.wacdo.mappers.DTOMapper;
 import com.gdu.wacdo.repositories.RestaurantRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -16,10 +17,15 @@ public class RestaurantService {
 
     private final RestaurantRepository restaurantRepository;
     private final ModelMapper modelMapper;
+    private final DTOMapper dtoMapper;
 
-    public RestaurantService(RestaurantRepository restaurantRepository, ModelMapper modelMapper) {
+    public RestaurantService(
+            RestaurantRepository restaurantRepository,
+            ModelMapper modelMapper,
+            DTOMapper dtoMapper) {
         this.restaurantRepository = restaurantRepository;
         this.modelMapper = modelMapper;
+        this.dtoMapper = dtoMapper;
     }
 
     public List<RestaurantResponseDTO> findAll() {
@@ -70,7 +76,7 @@ public class RestaurantService {
     // DTO METHODS
 
     private RestaurantResponseDTO toResponseDTO(Restaurant restaurant) {
-        return modelMapper.map(restaurant, RestaurantResponseDTO.class);
+        return dtoMapper.toRestaurantResponseDTO(restaurant);
     }
 
     private Restaurant toEntity(RestaurantRequestDTO dto) {
