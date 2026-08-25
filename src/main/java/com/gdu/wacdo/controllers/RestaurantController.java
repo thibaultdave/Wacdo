@@ -3,12 +3,14 @@ package com.gdu.wacdo.controllers;
 import com.gdu.wacdo.dto.RestaurantRequestDTO;
 import com.gdu.wacdo.dto.RestaurantResponseDTO;
 import com.gdu.wacdo.services.RestaurantService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/restaurants")
+@SecurityRequirement(name = "bearerAuth")
 public class RestaurantController {
 
     private final RestaurantService restaurantService;

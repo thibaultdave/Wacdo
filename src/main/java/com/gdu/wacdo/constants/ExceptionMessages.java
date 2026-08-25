@@ -10,7 +10,8 @@ public final class ExceptionMessages {
     public static final String JOB_NOT_FOUND = "No job found with id : ";
     public static final String ASSIGNMENT_NOT_FOUND = "No assignment found with id : ";
 
-    // EMAIL NOT FOUND
-    public static final String EMAIL_NOT_FOUND = "No collaborator found with email : ";
+    // AUTHENTICATION
+    public static final String NO_COLLABORATOR_WITH_EMAIL = "No collaborator found with email : ";
+    public static final String WRONG_EMAIL_OR_PASSWORD = "Incorrect email or password";
 }
 // TODO See to make a message.properties

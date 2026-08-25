@@ -23,10 +23,9 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email)
             throws UsernameNotFoundException {
 
-        Collaborator collaborator =
-                collaboratorRepository.findByEmail(email)
+        Collaborator collaborator = collaboratorRepository.findByEmail(email)
                         .orElseThrow(() -> new EmailNotFoundException(
-                                ExceptionMessages.EMAIL_NOT_FOUND, email
+                                ExceptionMessages.NO_COLLABORATOR_WITH_EMAIL, email
                         ));
 
         return User.builder()

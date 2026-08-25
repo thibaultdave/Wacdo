@@ -3,12 +3,14 @@ package com.gdu.wacdo.controllers;
 import com.gdu.wacdo.dto.JobRequestDTO;
 import com.gdu.wacdo.dto.JobResponseDTO;
 import com.gdu.wacdo.services.JobService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/jobs")
+@SecurityRequirement(name = "bearerAuth")
 public class JobController {
 
     private final JobService jobService;

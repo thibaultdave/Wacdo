@@ -24,19 +24,16 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public LoginResponseDTO login(
-            @RequestBody LoginRequestDTO dto) {
+    public LoginResponseDTO login(@RequestBody LoginRequestDTO dto) {
 
-        Authentication authentication =
-                authenticationManager.authenticate(
+        Authentication authentication = authenticationManager.authenticate(
                         new UsernamePasswordAuthenticationToken(
                                 dto.getEmail(),
                                 dto.getPassword()
                         )
                 );
 
-        String token =
-                jwtService.generateToken(
+        String token = jwtService.generateToken(
                         authentication.getName()
                 );
 

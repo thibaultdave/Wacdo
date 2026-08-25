@@ -3,12 +3,14 @@ package com.gdu.wacdo.controllers;
 import com.gdu.wacdo.dto.CollaboratorRequestDTO;
 import com.gdu.wacdo.dto.CollaboratorResponseDTO;
 import com.gdu.wacdo.services.CollaboratorService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/collaborators")
+@SecurityRequirement(name = "bearerAuth")
 public class CollaboratorController {
 
     private final CollaboratorService collaboratorService;
