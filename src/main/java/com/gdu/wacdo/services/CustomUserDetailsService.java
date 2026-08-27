@@ -1,5 +1,6 @@
 package com.gdu.wacdo.services;
 
+import com.gdu.wacdo.constants.CollaboratorRoles;
 import com.gdu.wacdo.constants.ExceptionMessages;
 import com.gdu.wacdo.entities.Collaborator;
 import com.gdu.wacdo.exceptions.EmailNotFoundException;
@@ -28,10 +29,14 @@ public class CustomUserDetailsService implements UserDetailsService {
                                 ExceptionMessages.NO_COLLABORATOR_WITH_EMAIL, email
                         ));
 
+        String role = collaborator.isAdmin()
+                ? CollaboratorRoles.ADMIN_ROLE
+                : CollaboratorRoles.USER_ROLE;
+
         return User.builder()
                 .username(collaborator.getEmail())
                 .password(collaborator.getPassword())
-                .roles(collaborator.isAdmin() ? "ADMIN" : "USER")
+                .roles(role)
                 .build();
     }
 }

@@ -13,5 +13,6 @@ public final class ExceptionMessages {
     // AUTHENTICATION
     public static final String NO_COLLABORATOR_WITH_EMAIL = "No collaborator found with email : ";
     public static final String WRONG_EMAIL_OR_PASSWORD = "Incorrect email or password";
+    public static final String NOT_ENOUGH_PRIVILEGE = "You do not have the necessary permissions to access this resource.";
 }
 // TODO See to make a message.properties
