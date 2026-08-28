@@ -13,6 +13,8 @@ public final class ExceptionMessages {
     // AUTHENTICATION
     public static final String NO_COLLABORATOR_WITH_EMAIL = "No collaborator found with email : ";
     public static final String WRONG_EMAIL_OR_PASSWORD = "Incorrect email or password";
+    public static final String MUST_LOG_TO_ACCESS = "You must be logged in to access this resource.";
     public static final String NOT_ENOUGH_PRIVILEGE = "You do not have the necessary permissions to access this resource.";
+    public static final String JWT_INVALID_OR_EXPIRED = "Invalid or expired JWT.";
 }
 // TODO See to make a message.properties

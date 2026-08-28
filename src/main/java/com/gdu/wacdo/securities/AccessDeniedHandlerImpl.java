@@ -1,6 +1,8 @@
 package com.gdu.wacdo.securities;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gdu.wacdo.constants.ExceptionMessages;
+import com.gdu.wacdo.dto.ErrorResponseDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.access.AccessDeniedException;
@@ -18,10 +20,19 @@ public class AccessDeniedHandlerImpl implements AccessDeniedHandler {
             HttpServletResponse response,
             AccessDeniedException accessDeniedException
     ) throws IOException {
-        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-        response.setContentType("text/plain");
-        response.getWriter().write(
+        ErrorResponseDTO error = new ErrorResponseDTO(
+                HttpServletResponse.SC_FORBIDDEN,
                 ExceptionMessages.NOT_ENOUGH_PRIVILEGE
+        );
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        response.setContentType("application/json");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.findAndRegisterModules();
+
+        objectMapper.writeValue(
+                response.getWriter(),
+                error
         );
     }
 }

@@ -3,7 +3,7 @@ package com.gdu.wacdo.services;
 import com.gdu.wacdo.constants.CollaboratorRoles;
 import com.gdu.wacdo.constants.ExceptionMessages;
 import com.gdu.wacdo.entities.Collaborator;
-import com.gdu.wacdo.exceptions.EmailNotFoundException;
+import com.gdu.wacdo.exceptions.ResourceNotFoundException;
 import com.gdu.wacdo.repositories.CollaboratorRepository;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,7 +25,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             throws UsernameNotFoundException {
 
         Collaborator collaborator = collaboratorRepository.findByEmail(email)
-                        .orElseThrow(() -> new EmailNotFoundException(
+                        .orElseThrow(() -> new ResourceNotFoundException(
                                 ExceptionMessages.NO_COLLABORATOR_WITH_EMAIL, email
                         ));
 

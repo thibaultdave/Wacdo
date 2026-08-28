@@ -1,6 +1,8 @@
 package com.gdu.wacdo.configs;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gdu.wacdo.constants.ExceptionMessages;
+import com.gdu.wacdo.dto.ErrorResponseDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.AuthenticationException;
@@ -18,9 +20,20 @@ public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
             HttpServletResponse response,
             AuthenticationException authException
     ) throws IOException {
+        ErrorResponseDTO error = new ErrorResponseDTO(
+                HttpServletResponse.SC_UNAUTHORIZED,
+                ExceptionMessages.MUST_LOG_TO_ACCESS
+        );
 
-        response.sendError(
-                HttpServletResponse.SC_UNAUTHORIZED, ExceptionMessages.WRONG_EMAIL_OR_PASSWORD
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("application/json");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.findAndRegisterModules();
+
+        objectMapper.writeValue(
+                response.getWriter(),
+                error
         );
     }
 }
