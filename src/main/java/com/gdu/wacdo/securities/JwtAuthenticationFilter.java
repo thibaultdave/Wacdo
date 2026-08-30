@@ -1,6 +1,10 @@
 package com.gdu.wacdo.securities;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gdu.wacdo.constants.ExceptionMessages;
+import com.gdu.wacdo.dto.ErrorResponseDTO;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -71,11 +75,56 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         .setAuthentication(authentication);
             }
 
-        } catch (Exception e) {
-            logger.debug(ExceptionMessages.JWT_INVALID_OR_EXPIRED, e);
+        } catch (TokenExpiredException e) {
+            logger.debug(ExceptionMessages.EXPIRED_JWT_TOKEN, e);
+
             SecurityContextHolder.clearContext();
+
+            sendErrorResponse(
+                    response,
+                    HttpServletResponse.SC_UNAUTHORIZED,
+                    ExceptionMessages.EXPIRED_JWT_TOKEN
+            );
+
+            return;
+
+        } catch (JWTVerificationException e) {
+            logger.debug(ExceptionMessages.INVALID_JWT_TOKEN, e);
+
+            SecurityContextHolder.clearContext();
+
+            sendErrorResponse(
+                    response,
+                    HttpServletResponse.SC_UNAUTHORIZED,
+                    ExceptionMessages.INVALID_JWT_TOKEN
+            );
+
+            return;
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private void sendErrorResponse(
+            HttpServletResponse response,
+            int status,
+            String message
+    ) throws IOException {
+
+        ErrorResponseDTO error = new ErrorResponseDTO(
+                status,
+                message
+        );
+
+        response.setStatus(status);
+        response.setContentType("application/json");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.findAndRegisterModules();
+
+        objectMapper.writeValue(
+                response.getWriter(),
+                error
+        );
     }
 }

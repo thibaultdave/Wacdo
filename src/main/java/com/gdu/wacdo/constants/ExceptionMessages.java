@@ -15,6 +15,7 @@ public final class ExceptionMessages {
     public static final String WRONG_EMAIL_OR_PASSWORD = "Incorrect email or password";
     public static final String MUST_LOG_TO_ACCESS = "You must be logged in to access this resource.";
     public static final String NOT_ENOUGH_PRIVILEGE = "You do not have the necessary permissions to access this resource.";
-    public static final String JWT_INVALID_OR_EXPIRED = "Invalid or expired JWT.";
+    public static final String INVALID_JWT_TOKEN = "Invalid JWT token.";
+    public static final String EXPIRED_JWT_TOKEN = "JWT token has expired.";
 }
 // TODO See to make a message.properties
