@@ -86,6 +86,29 @@ public class CollaboratorService {
         collaboratorRepository.deleteById(id);
     }
 
+    // TODO set this to be more robust
+    public CollaboratorResponseDTO createInitialAdmin(
+            CollaboratorRequestDTO dto
+    ) {
+        if (collaboratorRepository.count() > 0) {
+            throw new IllegalStateException(
+                    ExceptionMessages.ADMIN_ALREADY_EXISTS
+            );
+        }
+
+        Collaborator collaborator = new Collaborator();
+
+        setCollaboratorFromRequest(collaborator, dto);
+
+        collaborator.setAdmin(true);
+
+        Collaborator createdCollaborator = collaboratorRepository.save(collaborator);
+
+        return dtoMapper.toCollaboratorResponseDTO(
+                createdCollaborator
+        );
+    }
+
     // DTO METHODS
 
     private CollaboratorResponseDTO toResponseDTO(Collaborator collaborator) {

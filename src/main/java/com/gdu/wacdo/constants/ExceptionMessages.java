@@ -4,6 +4,8 @@ public final class ExceptionMessages {
 
     private ExceptionMessages() {}
 
+    public static final String ADMIN_ALREADY_EXISTS = "Initial administrator already exists.";
+
     // RESOURCE NOT FOUND
     public static final String COLLABORATOR_NOT_FOUND = "No collaborator found with id : ";
     public static final String RESTAURANT_NOT_FOUND = "No restaurant found with id : ";
