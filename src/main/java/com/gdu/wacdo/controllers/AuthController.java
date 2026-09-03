@@ -1,7 +1,5 @@
 package com.gdu.wacdo.controllers;
 
-import com.gdu.wacdo.dto.CollaboratorRequestDTO;
-import com.gdu.wacdo.dto.CollaboratorResponseDTO;
 import com.gdu.wacdo.dto.LoginRequestDTO;
 import com.gdu.wacdo.dto.LoginResponseDTO;
 import com.gdu.wacdo.securities.JwtService;
@@ -17,7 +15,6 @@ public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
-    private final CollaboratorService collaboratorService;
 
     public AuthController(
             AuthenticationManager authenticationManager,
@@ -27,7 +24,6 @@ public class AuthController {
 
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
-        this.collaboratorService = collaboratorService;
     }
 
     @PostMapping("/login")
@@ -45,12 +41,5 @@ public class AuthController {
                 );
 
         return new LoginResponseDTO(token);
-    }
-// TODO set this to be more robust
-    @PostMapping("/setup-admin")
-    public CollaboratorResponseDTO setupAdmin(
-            @RequestBody CollaboratorRequestDTO dto
-    ) {
-        return collaboratorService.createInitialAdmin(dto);
     }
 }
