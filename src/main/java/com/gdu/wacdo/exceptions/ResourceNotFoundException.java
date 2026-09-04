@@ -1,11 +1,18 @@
 package com.gdu.wacdo.exceptions;
 
+import lombok.Getter;
+
+@Getter
 public class ResourceNotFoundException extends RuntimeException {
 
-    public ResourceNotFoundException(String message, Long id) {
-        super(message + id);
+    private final Object[] args;
+
+    public ResourceNotFoundException(
+            String messageKey,
+            Object... args
+    ) {
+        super(messageKey);
+        this.args = args;
     }
-    public ResourceNotFoundException(String message, String email) {
-        super(message + email);
-    }
+
 }

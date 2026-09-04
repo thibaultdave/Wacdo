@@ -1,6 +1,5 @@
 package com.gdu.wacdo.services;
 
-import com.gdu.wacdo.constants.ExceptionMessages;
 import com.gdu.wacdo.dto.RestaurantRequestDTO;
 import com.gdu.wacdo.dto.RestaurantResponseDTO;
 import com.gdu.wacdo.entities.Restaurant;
@@ -38,7 +37,8 @@ public class RestaurantService {
     public Restaurant findRestaurantById(Long id) {
         return restaurantRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        ExceptionMessages.RESTAURANT_NOT_FOUND, id
+                        "error.restaurant.not-found",
+                        id
                 ));
     }
 
@@ -66,7 +66,8 @@ public class RestaurantService {
     public void deleteById(Long id) {
         if (!restaurantRepository.existsById(id)) {
             throw new ResourceNotFoundException(
-                    ExceptionMessages.RESTAURANT_NOT_FOUND, id
+                    "error.restaurant.not-found",
+                    id
             );
         }
 

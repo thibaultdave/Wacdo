@@ -1,6 +1,5 @@
 package com.gdu.wacdo.services;
 
-import com.gdu.wacdo.constants.ExceptionMessages;
 import com.gdu.wacdo.dto.CollaboratorRequestDTO;
 import com.gdu.wacdo.dto.CollaboratorResponseDTO;
 import com.gdu.wacdo.entities.Collaborator;
@@ -43,7 +42,8 @@ public class CollaboratorService {
     public Collaborator findCollaboratorById(Long id) {
         return collaboratorRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        ExceptionMessages.COLLABORATOR_NOT_FOUND, id
+                        "error.collaborator.not-found",
+                        id
                 ));
     }
 
@@ -79,7 +79,8 @@ public class CollaboratorService {
     public void deleteById(Long id) {
         if (!collaboratorRepository.existsById(id)) {
             throw new ResourceNotFoundException(
-                    ExceptionMessages.COLLABORATOR_NOT_FOUND, id
+                    "error.collaborator.not-found",
+                    id
             );
         }
 

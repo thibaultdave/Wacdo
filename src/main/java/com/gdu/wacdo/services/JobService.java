@@ -1,6 +1,5 @@
 package com.gdu.wacdo.services;
 
-import com.gdu.wacdo.constants.ExceptionMessages;
 import com.gdu.wacdo.dto.JobRequestDTO;
 import com.gdu.wacdo.dto.JobResponseDTO;
 import com.gdu.wacdo.entities.Job;
@@ -32,7 +31,8 @@ public class JobService {
     public Job findJobById(Long id) {
         return jobRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        ExceptionMessages.JOB_NOT_FOUND, id
+                        "error.job.not-found",
+                        id
                 ));
     }
 
@@ -60,7 +60,8 @@ public class JobService {
     public void deleteById(Long id) {
         if (!jobRepository.existsById(id)) {
             throw new ResourceNotFoundException(
-                    ExceptionMessages.JOB_NOT_FOUND, id
+                    "error.job.not-found",
+                    id
             );
         }
 

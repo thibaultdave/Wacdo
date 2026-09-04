@@ -1,6 +1,5 @@
 package com.gdu.wacdo.services;
 
-import com.gdu.wacdo.constants.ExceptionMessages;
 import com.gdu.wacdo.dto.AssignmentResponseDTO;
 import com.gdu.wacdo.dto.AssignmentRequestDTO;
 import com.gdu.wacdo.entities.Assignment;
@@ -46,7 +45,8 @@ public class AssignmentService {
     public Assignment findAssignmentById(Long id) {
         return assignmentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        ExceptionMessages.ASSIGNMENT_NOT_FOUND, id
+                        "error.assignment.not-found",
+                        id
                 ));
     }
 
@@ -74,7 +74,8 @@ public class AssignmentService {
     public void deleteById(Long id) {
         if (!assignmentRepository.existsById(id)) {
             throw new ResourceNotFoundException(
-                    ExceptionMessages.ASSIGNMENT_NOT_FOUND, id
+                    "error.assignment.not-found",
+                    id
             );
         }
 

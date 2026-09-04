@@ -3,14 +3,12 @@ package com.gdu.wacdo.securities;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gdu.wacdo.constants.ExceptionMessages;
+import com.gdu.wacdo.builders.ErrorResponseBuilder;
 import com.gdu.wacdo.dto.ErrorResponseDTO;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,14 +24,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
-    private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
+    private final ErrorResponseBuilder errorResponseBuilder;
 
     public JwtAuthenticationFilter(
             JwtService jwtService,
-            UserDetailsService userDetailsService) {
+            UserDetailsService userDetailsService,
+            ErrorResponseBuilder errorResponseBuilder
+    ) {
 
         this.jwtService = jwtService;
         this.userDetailsService = userDetailsService;
+        this.errorResponseBuilder = errorResponseBuilder;
     }
 
     @Override
@@ -76,27 +77,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
 
         } catch (TokenExpiredException e) {
-            logger.debug(ExceptionMessages.EXPIRED_JWT_TOKEN, e);
-
             SecurityContextHolder.clearContext();
 
             sendErrorResponse(
                     response,
-                    HttpServletResponse.SC_UNAUTHORIZED,
-                    ExceptionMessages.EXPIRED_JWT_TOKEN
+                    "error.jwt.expired"
             );
 
             return;
 
         } catch (JWTVerificationException e) {
-            logger.debug(ExceptionMessages.INVALID_JWT_TOKEN, e);
-
             SecurityContextHolder.clearContext();
 
             sendErrorResponse(
                     response,
-                    HttpServletResponse.SC_UNAUTHORIZED,
-                    ExceptionMessages.INVALID_JWT_TOKEN
+                    "error.jwt.invalid"
             );
 
             return;
@@ -107,11 +102,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private void sendErrorResponse(
             HttpServletResponse response,
-            int status,
             String message
     ) throws IOException {
 
-        ErrorResponseDTO error = new ErrorResponseDTO(
+        int status = HttpServletResponse.SC_UNAUTHORIZED;
+
+        ErrorResponseDTO error = errorResponseBuilder.build(
                 status,
                 message
         );

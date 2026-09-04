@@ -1,7 +1,6 @@
 package com.gdu.wacdo.services;
 
 import com.gdu.wacdo.constants.CollaboratorRoles;
-import com.gdu.wacdo.constants.ExceptionMessages;
 import com.gdu.wacdo.entities.Collaborator;
 import com.gdu.wacdo.exceptions.ResourceNotFoundException;
 import com.gdu.wacdo.repositories.CollaboratorRepository;
@@ -26,7 +25,8 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         Collaborator collaborator = collaboratorRepository.findByEmail(email)
                         .orElseThrow(() -> new ResourceNotFoundException(
-                                ExceptionMessages.NO_COLLABORATOR_WITH_EMAIL, email
+                                "error.collaborator.email-not-found",
+                                email
                         ));
 
         String role = collaborator.isAdmin()

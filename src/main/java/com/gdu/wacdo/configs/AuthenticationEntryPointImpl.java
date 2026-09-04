@@ -1,7 +1,7 @@
 package com.gdu.wacdo.configs;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gdu.wacdo.constants.ExceptionMessages;
+import com.gdu.wacdo.builders.ErrorResponseBuilder;
 import com.gdu.wacdo.dto.ErrorResponseDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,18 +14,29 @@ import java.io.IOException;
 @Component
 public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
 
+    private final ErrorResponseBuilder errorResponseBuilder;
+
+    public AuthenticationEntryPointImpl(
+            ErrorResponseBuilder errorResponseBuilder
+    ) {
+        this.errorResponseBuilder = errorResponseBuilder;
+    }
+
     @Override
     public void commence(
             HttpServletRequest request,
             HttpServletResponse response,
             AuthenticationException authException
     ) throws IOException {
-        ErrorResponseDTO error = new ErrorResponseDTO(
-                HttpServletResponse.SC_UNAUTHORIZED,
-                ExceptionMessages.MUST_LOG_TO_ACCESS
+
+        int status = HttpServletResponse.SC_UNAUTHORIZED;
+
+        ErrorResponseDTO error = errorResponseBuilder.build(
+                status,
+                 "error.auth.authentication-required"
         );
 
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setStatus(status);
         response.setContentType("application/json");
 
         ObjectMapper objectMapper = new ObjectMapper();
