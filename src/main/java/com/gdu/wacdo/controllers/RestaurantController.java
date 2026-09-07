@@ -4,6 +4,7 @@ import com.gdu.wacdo.dto.RestaurantRequestDTO;
 import com.gdu.wacdo.dto.RestaurantResponseDTO;
 import com.gdu.wacdo.services.RestaurantService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,12 +31,12 @@ public class RestaurantController {
     }
 
     @PostMapping
-    public RestaurantResponseDTO create(@RequestBody RestaurantRequestDTO dto) {
+    public RestaurantResponseDTO create(@Valid @RequestBody RestaurantRequestDTO dto) {
         return restaurantService.create(dto);
     }
 
     @PutMapping("/{id}")
-    public RestaurantResponseDTO update(@PathVariable Long id, @RequestBody RestaurantRequestDTO dto) {
+    public RestaurantResponseDTO update(@PathVariable Long id, @Valid @RequestBody RestaurantRequestDTO dto) {
         return restaurantService.update(id, dto);
     }
 
