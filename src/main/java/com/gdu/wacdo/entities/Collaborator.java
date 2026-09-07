@@ -25,6 +25,7 @@ public class Collaborator {
     @Email
     private String email;
 
+    @NotNull
     @PastOrPresent
     private LocalDate firstHireDate;
 

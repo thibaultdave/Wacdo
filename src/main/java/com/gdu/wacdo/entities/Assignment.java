@@ -1,6 +1,7 @@
 package com.gdu.wacdo.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import lombok.Data;
 
@@ -12,14 +13,20 @@ public class Assignment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @ManyToOne
     private Collaborator collaborator;
+
     @ManyToOne
     private Restaurant restaurant;
+
     @ManyToOne
     private Job job;
+
+    @NotNull
     @PastOrPresent
     private LocalDate startDate;
+
     @PastOrPresent
     private LocalDate endDate;
 }

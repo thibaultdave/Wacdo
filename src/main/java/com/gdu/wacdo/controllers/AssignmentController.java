@@ -4,6 +4,7 @@ import com.gdu.wacdo.dto.AssignmentRequestDTO;
 import com.gdu.wacdo.dto.AssignmentResponseDTO;
 import com.gdu.wacdo.services.AssignmentService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,11 +31,11 @@ public class AssignmentController {
     }
 
     @PostMapping
-    public AssignmentResponseDTO create(@RequestBody AssignmentRequestDTO dto) {
+    public AssignmentResponseDTO create(@Valid @RequestBody AssignmentRequestDTO dto) {
         return assignmentService.create(dto);
     }
     @PutMapping("/{id}")
-    public AssignmentResponseDTO update(@PathVariable Long id, @RequestBody AssignmentRequestDTO dto) {
+    public AssignmentResponseDTO update(@PathVariable Long id, @Valid @RequestBody AssignmentRequestDTO dto) {
         return assignmentService.update(id, dto);
     }
 
