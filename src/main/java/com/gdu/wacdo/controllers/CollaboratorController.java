@@ -4,6 +4,7 @@ import com.gdu.wacdo.dto.CollaboratorRequestDTO;
 import com.gdu.wacdo.dto.CollaboratorResponseDTO;
 import com.gdu.wacdo.services.CollaboratorService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,12 +31,12 @@ public class CollaboratorController {
     }
 
     @PostMapping
-    public CollaboratorResponseDTO create(@RequestBody CollaboratorRequestDTO dto) {
+    public CollaboratorResponseDTO create(@Valid @RequestBody CollaboratorRequestDTO dto) {
         return collaboratorService.create(dto);
     }
 
     @PutMapping("/{id}")
-    public CollaboratorResponseDTO update(@PathVariable Long id, @RequestBody CollaboratorRequestDTO dto) {
+    public CollaboratorResponseDTO update(@PathVariable Long id, @Valid @RequestBody CollaboratorRequestDTO dto) {
         return collaboratorService.update(id, dto);
     }
 
