@@ -4,6 +4,7 @@ import com.gdu.wacdo.dto.JobRequestDTO;
 import com.gdu.wacdo.dto.JobResponseDTO;
 import com.gdu.wacdo.services.JobService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,12 +31,12 @@ public class JobController {
     }
 
     @PostMapping
-    public JobResponseDTO create(@RequestBody JobRequestDTO dto) {
+    public JobResponseDTO create(@Valid @RequestBody JobRequestDTO dto) {
         return jobService.create(dto);
     }
 
     @PutMapping("/{id}")
-    public JobResponseDTO update(@PathVariable Long id, @RequestBody JobRequestDTO dto) {
+    public JobResponseDTO update(@PathVariable Long id, @Valid @RequestBody JobRequestDTO dto) {
         return jobService.update(id, dto);
     }
 
