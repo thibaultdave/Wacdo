@@ -71,7 +71,6 @@ class CollaboratorServiceTest {
 
     @Test
     void findCollaboratorById_shouldThrowException_whenIdDoesNotExist() {
-
         // Arrange
         Long id = 999L;
 
@@ -79,7 +78,8 @@ class CollaboratorServiceTest {
                 .thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThatThrownBy(() -> collaboratorService.findCollaboratorById(id)
+        assertThatThrownBy(
+                () -> collaboratorService.findCollaboratorById(id)
         )
                 .isInstanceOf(ResourceNotFoundException.class);
     }
