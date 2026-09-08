@@ -93,12 +93,6 @@ public class CollaboratorService {
         return dtoMapper.toCollaboratorResponseDTO(collaborator);
     }
 
-    private Collaborator toEntity(CollaboratorRequestDTO dto) {
-        Collaborator collaborator = new Collaborator();
-
-        return setCollaboratorFromRequest(collaborator, dto);
-    }
-
     private Collaborator setCollaboratorFromRequest(Collaborator collaborator, CollaboratorRequestDTO dto) {
         modelMapper.map(dto, collaborator);
 
