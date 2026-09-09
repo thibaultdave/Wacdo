@@ -45,7 +45,6 @@ public class SecurityConfig {
         return configuration.getAuthenticationManager();
     }
 
-//TODO Check what needs to be removed when user interface is available
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
