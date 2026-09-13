@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +24,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@ActiveProfiles("test")
 class CollaboratorServiceTest {
 
     @Mock
@@ -126,7 +128,7 @@ class CollaboratorServiceTest {
         assertThat(result)
                 .isEmpty();
     }
-
+//TODO use factory
     // CREATE
     @Test
     void create_shouldCreateCollaborator() {
@@ -152,8 +154,7 @@ class CollaboratorServiceTest {
         when(dtoMapper.toCollaboratorResponseDTO(savedCollaborator))
                 .thenReturn(response);
 
-        CollaboratorResponseDTO result =
-                collaboratorService.create(request);
+        CollaboratorResponseDTO result = collaboratorService.create(request);
 
         assertThat(result)
                 .isSameAs(response);
