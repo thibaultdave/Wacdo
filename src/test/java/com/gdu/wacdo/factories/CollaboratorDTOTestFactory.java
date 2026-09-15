@@ -2,10 +2,14 @@ package com.gdu.wacdo.factories;
 
 import com.gdu.wacdo.dto.CollaboratorRequestDTO;
 import com.gdu.wacdo.dto.CollaboratorResponseDTO;
+import com.gdu.wacdo.entities.Collaborator;
+import org.modelmapper.ModelMapper;
 
 import java.time.LocalDate;
 
 public class CollaboratorDTOTestFactory {
+
+    private static final ModelMapper modelMapper = new ModelMapper();
 
     private static CollaboratorRequestDTO createTestCollaboratorRequestDTO(
             String name,
@@ -96,5 +100,12 @@ public class CollaboratorDTOTestFactory {
                 "2010-10-10",
                 true
         );
+    }
+
+    public static Collaborator createGenericCollaborator() {
+
+        Collaborator collaborator = new Collaborator();
+        modelMapper.map(createGenericCollaboratorRequestDTO(), collaborator);
+        return collaborator;
     }
 }
