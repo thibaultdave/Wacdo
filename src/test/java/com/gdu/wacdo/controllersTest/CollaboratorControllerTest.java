@@ -7,6 +7,7 @@ import com.gdu.wacdo.constants.CollaboratorRoles;
 import com.gdu.wacdo.controllers.CollaboratorController;
 import com.gdu.wacdo.dto.CollaboratorRequestDTO;
 import com.gdu.wacdo.dto.ErrorResponseDTO;
+import com.gdu.wacdo.exceptions.ResourceAlreadyExistsException;
 import com.gdu.wacdo.exceptions.ResourceNotFoundException;
 import com.gdu.wacdo.securities.JwtService;
 import com.gdu.wacdo.services.CollaboratorService;
@@ -172,6 +173,44 @@ class CollaboratorControllerTest {
                 .andExpect(jsonPath("$.errors.password").value("{validation.collaborator.password.size}"));
     }
 
+    @Test
+    @WithMockUser(roles = CollaboratorRoles.ADMIN_ROLE)
+    void create_shouldReturn409_whenEmailAlreadyExists() throws Exception {
+
+        int status = HttpServletResponse.SC_CONFLICT;
+
+        when(collaboratorService.create(any(CollaboratorRequestDTO.class)))
+                .thenThrow(
+                        new ResourceAlreadyExistsException(
+                                "error.collaborator.email-already-exists",
+                                "jean.dupont@test.com"
+                        )
+                );
+
+        when(errorResponseBuilder.build(
+                eq(status),
+                eq("error.collaborator.email-already-exists"),
+                eq("jean.dupont@test.com")
+        )).thenReturn(
+                new ErrorResponseDTO(
+                        status,
+                        "A collaborator already exists with email: jean.dupont@test.com."
+                )
+        );
+
+        mockMvc.perform(
+                        post("/api/collaborators")
+                                .contentType(APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(
+                                        createGenericCollaboratorRequestDTO()
+                                ))
+                )
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.status").value(status))
+                .andExpect(jsonPath("$.message")
+                        .value("A collaborator already exists with email: jean.dupont@test.com."));
+    }
+
     // UPDATE
     @Test
     @WithMockUser(roles = CollaboratorRoles.ADMIN_ROLE)
@@ -239,11 +278,11 @@ class CollaboratorControllerTest {
         )).thenReturn(
                 new ErrorResponseDTO(
                         status,
-                        "No collaborator found with id: 99."
+                        "No collaborator found with id: " + id + "."
                 )
         );
 
-        mockMvc.perform(put("/api/collaborators/99")
+        mockMvc.perform(put("/api/collaborators/{id}", id)
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
                                 createGenericCollaboratorRequestDTO()
@@ -251,7 +290,49 @@ class CollaboratorControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value(status))
                 .andExpect(jsonPath("$.message")
-                        .value("No collaborator found with id: 99."));
+                        .value("No collaborator found with id: " + id + "."));
+    }
+
+    @Test
+    @WithMockUser(roles = CollaboratorRoles.ADMIN_ROLE)
+    void update_shouldReturn409_whenEmailAlreadyExists() throws Exception {
+
+        int status = HttpServletResponse.SC_CONFLICT;
+        long id = 1L;
+        String email = "jean.dupont@test.com";
+
+        when(collaboratorService.update(
+                eq(id),
+                any(CollaboratorRequestDTO.class)
+        )).thenThrow(
+                new ResourceAlreadyExistsException(
+                        "error.collaborator.email-already-exists",
+                        email
+                )
+        );
+
+        when(errorResponseBuilder.build(
+                eq(status),
+                eq("error.collaborator.email-already-exists"),
+                eq(email)
+        )).thenReturn(
+                new ErrorResponseDTO(
+                        status,
+                        "A collaborator already exists with email: " + email +"."
+                )
+        );
+
+        mockMvc.perform(
+                        put("/api/collaborators/{id}", id)
+                                .contentType(APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(
+                                        createUpdatedCollaboratorRequestDTO()
+                                ))
+                )
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.status").value(status))
+                .andExpect(jsonPath("$.message")
+                        .value("A collaborator already exists with email: " + email +"."));
     }
 
     // DELETE
