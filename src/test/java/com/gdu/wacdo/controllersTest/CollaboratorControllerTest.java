@@ -2,6 +2,7 @@ package com.gdu.wacdo.controllersTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gdu.wacdo.builders.ErrorResponseBuilder;
+import com.gdu.wacdo.config.TestConfiguration;
 import com.gdu.wacdo.constants.CollaboratorRoles;
 import com.gdu.wacdo.controllers.CollaboratorController;
 import com.gdu.wacdo.dto.CollaboratorRequestDTO;
@@ -12,13 +13,9 @@ import com.gdu.wacdo.services.CollaboratorService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
-import org.springframework.context.annotation.Bean;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -36,6 +33,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @WebMvcTest(CollaboratorController.class)
 @ActiveProfiles("test")
+@Import({TestConfiguration.TestConfig.class, TestConfiguration.TestSecurityConfig.class})
 class CollaboratorControllerTest {
 
     @Autowired
@@ -304,38 +302,4 @@ class CollaboratorControllerTest {
                 .andExpect(jsonPath("$.message")
                         .value("No collaborator found with id: 99."));
     }
-
-    // CONFIG METHODS
-    @TestConfiguration
-    static class TestSecurityConfig {
-
-        @Bean
-        SecurityFilterChain testSecurityFilterChain(HttpSecurity http) throws Exception {
-            http
-                    .csrf(AbstractHttpConfigurer::disable)
-                    .authorizeHttpRequests(auth -> auth
-                            .anyRequest().hasRole(CollaboratorRoles.ADMIN_ROLE)
-                    )
-                    .exceptionHandling(exception -> exception
-                            .authenticationEntryPoint(
-                                    (request, response, authException) ->
-                                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED)
-                            )
-                    );
-
-            return http.build();
-        }
-    }
-
-    @TestConfiguration
-    static class TestConfig {
-
-        @Bean
-        ObjectMapper objectMapper() {
-            return new ObjectMapper()
-                    .findAndRegisterModules();
-        }
-    }
-
-
 }
