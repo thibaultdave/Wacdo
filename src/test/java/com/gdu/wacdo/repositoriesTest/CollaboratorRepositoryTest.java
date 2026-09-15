@@ -1,7 +1,7 @@
 package com.gdu.wacdo.repositoriesTest;
 
 import com.gdu.wacdo.entities.Collaborator;
-import com.gdu.wacdo.factories.CollaboratorDTOTestFactory;
+import com.gdu.wacdo.factories.CollaboratorTestFactory;
 import com.gdu.wacdo.repositories.CollaboratorRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +9,6 @@ import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,7 +29,7 @@ class CollaboratorRepositoryTest {
 
         Collaborator collaborator =
                 collaboratorRepository.save(
-                        CollaboratorDTOTestFactory.createGenericCollaborator()
+                        CollaboratorTestFactory.createGenericCollaborator()
                 );
 
         Optional<Collaborator> result =
@@ -53,7 +52,7 @@ class CollaboratorRepositoryTest {
     void existsByEmail_shouldReturnTrue_whenEmailExists() {
 
         collaboratorRepository.save(
-                CollaboratorDTOTestFactory.createGenericCollaborator()
+                CollaboratorTestFactory.createGenericCollaborator()
         );
 
         assertTrue(
@@ -75,7 +74,7 @@ class CollaboratorRepositoryTest {
 
         Collaborator collaborator =
                 collaboratorRepository.save(
-                        CollaboratorDTOTestFactory.createGenericCollaborator()
+                        CollaboratorTestFactory.createGenericCollaborator()
                 );
 
         assertFalse(
@@ -91,12 +90,12 @@ class CollaboratorRepositoryTest {
 
         Collaborator jean =
                 collaboratorRepository.save(
-                        CollaboratorDTOTestFactory.createGenericCollaborator()
+                        CollaboratorTestFactory.createGenericCollaborator()
                 );
 
         Collaborator gerard =
                 collaboratorRepository.save(
-                        CollaboratorDTOTestFactory.createUpdatedCollaborator()
+                        CollaboratorTestFactory.createUpdatedCollaborator()
                 );
 
         assertTrue(

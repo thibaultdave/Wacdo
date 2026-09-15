@@ -7,7 +7,7 @@ import org.modelmapper.ModelMapper;
 
 import java.time.LocalDate;
 
-public class CollaboratorDTOTestFactory {
+public class CollaboratorTestFactory {
 
     private static final ModelMapper modelMapper = new ModelMapper();
 
@@ -103,9 +103,14 @@ public class CollaboratorDTOTestFactory {
     }
 
     public static Collaborator createGenericCollaborator() {
-
         Collaborator collaborator = new Collaborator();
         modelMapper.map(createGenericCollaboratorRequestDTO(), collaborator);
+        return collaborator;
+    }
+
+    public static Collaborator createUpdatedCollaborator() {
+        Collaborator collaborator = new Collaborator();
+        modelMapper.map(createUpdatedCollaboratorRequestDTO(), collaborator);
         return collaborator;
     }
 }

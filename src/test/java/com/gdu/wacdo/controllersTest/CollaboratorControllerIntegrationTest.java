@@ -5,7 +5,7 @@ import com.gdu.wacdo.config.TestConfiguration;
 import com.gdu.wacdo.constants.CollaboratorRoles;
 import com.gdu.wacdo.dto.CollaboratorRequestDTO;
 import com.gdu.wacdo.entities.Collaborator;
-import com.gdu.wacdo.factories.CollaboratorDTOTestFactory;
+import com.gdu.wacdo.factories.CollaboratorTestFactory;
 import com.gdu.wacdo.repositories.CollaboratorRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -58,7 +58,7 @@ class CollaboratorControllerIntegrationTest {
     @WithMockUser(roles = CollaboratorRoles.ADMIN_ROLE)
     void create_shouldPersistCollaboratorInDatabase() throws Exception {
 
-        CollaboratorRequestDTO request = CollaboratorDTOTestFactory.createGenericCollaboratorRequestDTO();
+        CollaboratorRequestDTO request = CollaboratorTestFactory.createGenericCollaboratorRequestDTO();
 
         mockMvc.perform(
                         post("/api/collaborators")
@@ -98,7 +98,7 @@ class CollaboratorControllerIntegrationTest {
     void findAll_shouldReturnCollaborators() throws Exception {
 
         collaboratorRepository.save(
-                CollaboratorDTOTestFactory.createGenericCollaborator()
+                CollaboratorTestFactory.createGenericCollaborator()
         );
 
         mockMvc.perform(
@@ -135,7 +135,7 @@ class CollaboratorControllerIntegrationTest {
 
         Collaborator collaborator =
                 collaboratorRepository.save(
-                        CollaboratorDTOTestFactory.createGenericCollaborator()
+                        CollaboratorTestFactory.createGenericCollaborator()
                 );
         Long id = collaborator.getId();
 
@@ -176,7 +176,7 @@ class CollaboratorControllerIntegrationTest {
 
         // Create collaborator
         CollaboratorRequestDTO createRequest =
-                CollaboratorDTOTestFactory.createGenericCollaboratorRequestDTO();
+                CollaboratorTestFactory.createGenericCollaboratorRequestDTO();
 
         mockMvc.perform(
                         post("/api/collaborators")
@@ -190,7 +190,7 @@ class CollaboratorControllerIntegrationTest {
         Long id = collaborator.getId();
 
         // Update collaborator
-        CollaboratorRequestDTO updateRequest = CollaboratorDTOTestFactory.createUpdatedCollaboratorRequestDTO();
+        CollaboratorRequestDTO updateRequest = CollaboratorTestFactory.createUpdatedCollaboratorRequestDTO();
 
         mockMvc.perform(
                         put("/api/collaborators/{id}", id)
@@ -229,7 +229,7 @@ class CollaboratorControllerIntegrationTest {
         Long id = 999L;
 
         CollaboratorRequestDTO request =
-                CollaboratorDTOTestFactory.createUpdatedCollaboratorRequestDTO();
+                CollaboratorTestFactory.createUpdatedCollaboratorRequestDTO();
 
         mockMvc.perform(
                         put("/api/collaborators/{id}", id)
@@ -247,7 +247,7 @@ class CollaboratorControllerIntegrationTest {
     void delete_shouldRemoveCollaboratorFromDatabase() throws Exception {
 
         Collaborator collaborator = collaboratorRepository.save(
-                CollaboratorDTOTestFactory.createGenericCollaborator()
+                CollaboratorTestFactory.createGenericCollaborator()
         );
 
         Long id = collaborator.getId();
