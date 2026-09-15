@@ -3,6 +3,7 @@ package com.gdu.wacdo.services;
 import com.gdu.wacdo.dto.CollaboratorRequestDTO;
 import com.gdu.wacdo.dto.CollaboratorResponseDTO;
 import com.gdu.wacdo.entities.Collaborator;
+import com.gdu.wacdo.exceptions.ResourceAlreadyExistsException;
 import com.gdu.wacdo.exceptions.ResourceNotFoundException;
 import com.gdu.wacdo.mappers.DTOMapper;
 import com.gdu.wacdo.repositories.CollaboratorRepository;
@@ -53,6 +54,13 @@ public class CollaboratorService {
 
     public CollaboratorResponseDTO create(CollaboratorRequestDTO dto) {
 
+        if (collaboratorRepository.existsByEmail(dto.getEmail())) {
+            throw new ResourceAlreadyExistsException(
+                    "error.collaborator.email-already-exists",
+                    dto.getEmail()
+            );
+        }
+
         Collaborator collaborator = new Collaborator();
 
         modelMapper.map(dto, collaborator);
@@ -67,6 +75,13 @@ public class CollaboratorService {
     }
 
     public CollaboratorResponseDTO update(Long id, CollaboratorRequestDTO dto) {
+
+        if (collaboratorRepository.existsByEmailAndIdNot(dto.getEmail(), id)) {
+            throw new ResourceAlreadyExistsException(
+                    "error.collaborator.email-already-exists",
+                    dto.getEmail()
+            );
+        }
 
         Collaborator collaborator = findCollaboratorById(id);
         Collaborator updatedCollaborator = collaboratorRepository.save(

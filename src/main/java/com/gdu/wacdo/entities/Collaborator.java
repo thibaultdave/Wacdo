@@ -23,6 +23,7 @@ public class Collaborator {
 
     @NotBlank
     @Email
+    @Column(unique = true)
     private String email;
 
     @NotNull
