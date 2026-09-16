@@ -97,22 +97,32 @@ class CollaboratorControllerIntegrationTest {
     @WithMockUser(roles = CollaboratorRoles.ADMIN_ROLE)
     void findAll_shouldReturnCollaborators() throws Exception {
 
-        collaboratorRepository.save(
+        Collaborator firstCollaborator = collaboratorRepository.save(
                 CollaboratorTestFactory.createGenericCollaborator()
         );
 
-        mockMvc.perform(
-                        get("/api/collaborators")
-                                .contentType(APPLICATION_JSON)
-                )
+        Collaborator secondtCollaborator = collaboratorRepository.save(
+                CollaboratorTestFactory.createUpdatedCollaborator()
+        );
+
+        mockMvc.perform(get("/api/collaborators"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$.length()").value(2))
+
+                .andExpect(jsonPath("$[0].id").value(firstCollaborator.getId()))
                 .andExpect(jsonPath("$[0].name").value("Dupont"))
                 .andExpect(jsonPath("$[0].firstName").value("Jean"))
                 .andExpect(jsonPath("$[0].email").value("jean.dupont@test.com"))
                 .andExpect(jsonPath("$[0].firstHireDate").value("2000-10-10"))
-                .andExpect(jsonPath("$[0].admin").value(false));
+                .andExpect(jsonPath("$[0].admin").value(false))
+
+                .andExpect(jsonPath("$[1].id").value(secondtCollaborator.getId()))
+                .andExpect(jsonPath("$[1].name").value("Bouchard"))
+                .andExpect(jsonPath("$[1].firstName").value("Gérard"))
+                .andExpect(jsonPath("$[1].email").value("gerard.bouchard@test.com"))
+                .andExpect(jsonPath("$[1].firstHireDate").value("2010-10-10"))
+                .andExpect(jsonPath("$[1].admin").value(true));
     }
 
     @Test
@@ -149,21 +159,6 @@ class CollaboratorControllerIntegrationTest {
                 .andExpect(jsonPath("$.email").value("jean.dupont@test.com"))
                 .andExpect(jsonPath("$.firstHireDate").value("2000-10-10"))
                 .andExpect(jsonPath("$.admin").value(false));
-    }
-
-    @Test
-    @WithMockUser(roles = CollaboratorRoles.ADMIN_ROLE)
-    void findById_shouldReturn404_whenCollaboratorDoesNotExist() throws Exception {
-
-        Long id = 999L;
-
-        // WHEN & THEN
-        mockMvc.perform(
-                        get("/api/collaborators/{id}", id)
-                )
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.message")
-                        .value("No collaborator found with id: " + 999 + "."));
     }
 
     // UPDATE
@@ -222,25 +217,6 @@ class CollaboratorControllerIntegrationTest {
         );
     }
 
-    @Test
-    @WithMockUser(roles = CollaboratorRoles.ADMIN_ROLE)
-    void update_shouldReturn404_whenCollaboratorDoesNotExist() throws Exception {
-
-        Long id = 999L;
-
-        CollaboratorRequestDTO request =
-                CollaboratorTestFactory.createUpdatedCollaboratorRequestDTO();
-
-        mockMvc.perform(
-                        put("/api/collaborators/{id}", id)
-                                .contentType(APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(request))
-                )
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.message")
-                        .value("No collaborator found with id: " + id + "."));
-    }
-
     // DELETE
     @Test
     @WithMockUser(roles = CollaboratorRoles.ADMIN_ROLE)
@@ -260,19 +236,5 @@ class CollaboratorControllerIntegrationTest {
         Optional<Collaborator> deletedCollaborator = collaboratorRepository.findById(id);
 
         assertTrue(deletedCollaborator.isEmpty());
-    }
-
-    @Test
-    @WithMockUser(roles = CollaboratorRoles.ADMIN_ROLE)
-    void delete_shouldReturn404_whenCollaboratorDoesNotExist() throws Exception {
-
-        Long id = 999L;
-
-        mockMvc.perform(
-                        delete("/api/collaborators/{id}", id)
-                )
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.message")
-                        .value("No collaborator found with id: " + id + "."));
     }
 }

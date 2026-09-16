@@ -106,12 +106,14 @@ class CollaboratorControllerTest {
     @WithMockUser(roles = CollaboratorRoles.ADMIN_ROLE)
     void findById_shouldReturn200_whenCollaboratorExists() throws Exception {
 
-        when(collaboratorService.findById(1L))
+        Long id = 1L;
+
+        when(collaboratorService.findById(id))
                 .thenReturn(createGenericCollaboratorResponseDTO());
 
-        mockMvc.perform(get("/api/collaborators/1"))
+        mockMvc.perform(get("/api/collaborators/{id}",id))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.id").value(id))
                 .andExpect(jsonPath("$.name").value("Dupont"))
                 .andExpect(jsonPath("$.firstName").value("Jean"))
                 .andExpect(jsonPath("$.email").value("jean.dupont@test.com"))
@@ -139,7 +141,7 @@ class CollaboratorControllerTest {
         )).thenReturn(
                 new ErrorResponseDTO(
                         status,
-                        "No collaborator found with id: 99."
+                        "No collaborator found with id: " + id + "."
                 )
         );
 
@@ -147,7 +149,7 @@ class CollaboratorControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value(status))
                 .andExpect(jsonPath("$.message")
-                        .value("No collaborator found with id: 99."));
+                        .value("No collaborator found with id: " + id + "."));
     }
 
     // CREATE
@@ -236,19 +238,21 @@ class CollaboratorControllerTest {
     @WithMockUser(roles = CollaboratorRoles.ADMIN_ROLE)
     void update_shouldReturn200_whenCollaboratorIsValid() throws Exception {
 
-        when(collaboratorService.update(1L, createUpdatedCollaboratorRequestDTO()))
+        Long id = 1L;
+
+        when(collaboratorService.update(id, createUpdatedCollaboratorRequestDTO()))
                 .thenReturn(
-                        createUpdatedCollaboratorResponseDTO()
+                        createUpdatedCollaboratorResponseDTO(id)
                 );
 
         mockMvc.perform(
-                put("/api/collaborators/1")
+                put("/api/collaborators/{id}", id)
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
                                 createUpdatedCollaboratorRequestDTO()
                         ))
                 ).andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.id").value(id))
                 .andExpect(jsonPath("$.name").value("Bouchard"))
                 .andExpect(jsonPath("$.firstName").value("Gérard"))
                 .andExpect(jsonPath("$.email").value("gerard.bouchard@test.com"))
@@ -261,7 +265,7 @@ class CollaboratorControllerTest {
     void update_shouldReturn400_whenCollaboratorIsInvalid() throws Exception {
 
         mockMvc.perform(
-                        put("/api/collaborators/1")
+                        put("/api/collaborators/{id}", 1)
                                 .contentType(APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(
                                         createFailedCollaboratorRequestDTO()
@@ -393,7 +397,7 @@ class CollaboratorControllerTest {
         )).thenReturn(
                 new ErrorResponseDTO(
                         status,
-                        "No collaborator found with id: 99."
+                        "No collaborator found with id: " + 99 + "."
                 )
         );
 
@@ -401,6 +405,6 @@ class CollaboratorControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value(status))
                 .andExpect(jsonPath("$.message")
-                        .value("No collaborator found with id: 99."));
+                        .value("No collaborator found with id: " + 99 + "."));
     }
 }

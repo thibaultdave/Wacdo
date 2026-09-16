@@ -91,9 +91,9 @@ public class CollaboratorTestFactory {
         );
     }
 
-    public static CollaboratorResponseDTO createUpdatedCollaboratorResponseDTO() {
+    public static CollaboratorResponseDTO createUpdatedCollaboratorResponseDTO(Long id) {
         return createTestCollaboratorResponseDTO(
-                1L,
+                id,
                 "Bouchard",
                 "Gérard",
                 "gerard.bouchard@test.com",
