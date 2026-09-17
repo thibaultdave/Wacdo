@@ -10,6 +10,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -142,6 +143,7 @@ class JwtAuthenticationFilterTest {
         verify(filterChain).doFilter(request, response);
     }
 
+    // 401 tests
     @Test
     void doFilter_shouldReturn401_whenTokenIsExpired() throws Exception {
 
@@ -225,5 +227,75 @@ class JwtAuthenticationFilterTest {
                         .getContext()
                         .getAuthentication()
         );
+    }
+
+    @Test
+    void doFilter_shouldNotReplaceAuthentication_whenUserIsAlreadyAuthenticated() throws Exception {
+
+        String token = "valid-token";
+        String email = "jean.dupont@test.com";
+
+        UserDetails existingUser = User
+                .withUsername("existing@test.com")
+                .password("password")
+                .roles("USER")
+                .build();
+
+        UserDetails jwtUser = User
+                .withUsername(email)
+                .password("password")
+                .roles("ADMIN")
+                .build();
+
+        UsernamePasswordAuthenticationToken existingAuthentication =
+                new UsernamePasswordAuthenticationToken(
+                        existingUser,
+                        null,
+                        existingUser.getAuthorities()
+                );
+
+        SecurityContextHolder
+                .getContext()
+                .setAuthentication(existingAuthentication);
+
+        MockHttpServletRequest request =
+                new MockHttpServletRequest();
+
+        request.addHeader(
+                "Authorization",
+                "Bearer " + token
+        );
+
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        when(jwtService.extractEmail(token))
+                .thenReturn(email);
+
+        when(userDetailsService.loadUserByUsername(email))
+                .thenReturn(jwtUser);
+
+        when(jwtService.isTokenValid(token, jwtUser))
+                .thenReturn(true);
+
+        filter.doFilter(
+                request,
+                response,
+                filterChain
+        );
+
+        assertSame(
+                existingAuthentication,
+                SecurityContextHolder
+                        .getContext()
+                        .getAuthentication()
+        );
+
+        verify(jwtService).extractEmail(token);
+
+        verify(userDetailsService).loadUserByUsername(email);
+
+        verify(jwtService).isTokenValid(token, jwtUser);
+
+        verify(filterChain).doFilter(request, response);
     }
 }
