@@ -1,9 +1,9 @@
 package com.gdu.wacdo.securitiesTest;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gdu.wacdo.config.TestConfiguration;
 import com.gdu.wacdo.entities.Collaborator;
+import com.gdu.wacdo.factories.CollaboratorTestFactory;
 import com.gdu.wacdo.repositories.CollaboratorRepository;
 import com.gdu.wacdo.securities.JwtService;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,10 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -54,25 +51,54 @@ class SecurityIntegrationTest {
         mockMvc.perform(get("/api/collaborators"))
                 .andExpect(status().isUnauthorized());
     }
-//TODO do next tests
+
     @Test
     void protectedEndpoint_shouldReturn401_whenInvalidToken() throws Exception {
 
-        mockMvc.perform(get("/api/collaborators"))
+        mockMvc.perform(
+                        get("/api/collaborators")
+                                .header("Authorization", "Bearer invalid-token")
+                )
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
     void protectedEndpoint_shouldReturn403_whenValidTokenAndNotAdmin() throws Exception {
 
-        mockMvc.perform(get("/api/collaborators"))
+        // Collaborator who !isAdmin
+        Collaborator collaborator =
+                collaboratorRepository.save(
+                        CollaboratorTestFactory.createGenericCollaborator()
+                );
+
+        String token = jwtService.generateToken(
+                collaborator.getEmail()
+        );
+
+        mockMvc.perform(
+                        get("/api/collaborators")
+                                .header("Authorization", "Bearer " + token)
+                )
                 .andExpect(status().isForbidden());
     }
 
     @Test
     void protectedEndpoint_shouldReturn200_whenValidTokenAndAdmin() throws Exception {
 
-        mockMvc.perform(get("/api/collaborators"))
+        // Collaborator who isAdmin
+        Collaborator collaborator =
+                collaboratorRepository.save(
+                        CollaboratorTestFactory.createUpdatedCollaborator()
+                );
+
+        String token = jwtService.generateToken(
+                collaborator.getEmail()
+        );
+
+        mockMvc.perform(
+                        get("/api/collaborators")
+                                .header("Authorization", "Bearer " + token)
+                )
                 .andExpect(status().isOk());
     }
 }

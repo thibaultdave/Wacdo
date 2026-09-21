@@ -11,6 +11,7 @@ public class CollaboratorTestFactory {
 
     private static final ModelMapper modelMapper = new ModelMapper();
 
+    // REQUEST
     private static CollaboratorRequestDTO createTestCollaboratorRequestDTO(
             String name,
             String firstName,
@@ -62,6 +63,7 @@ public class CollaboratorTestFactory {
         );
     }
 
+    // RESPONSE
     private static CollaboratorResponseDTO createTestCollaboratorResponseDTO(
             long id,
             String name,
@@ -102,6 +104,7 @@ public class CollaboratorTestFactory {
         );
     }
 
+    // COLLABORATOR
     public static Collaborator createGenericCollaborator() {
         Collaborator collaborator = new Collaborator();
         modelMapper.map(createGenericCollaboratorRequestDTO(), collaborator);
