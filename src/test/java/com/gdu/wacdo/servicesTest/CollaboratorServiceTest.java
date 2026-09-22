@@ -3,7 +3,9 @@ package com.gdu.wacdo.servicesTest;
 import com.gdu.wacdo.dto.CollaboratorRequestDTO;
 import com.gdu.wacdo.dto.CollaboratorResponseDTO;
 import com.gdu.wacdo.entities.Collaborator;
+import com.gdu.wacdo.exceptions.ResourceAlreadyExistsException;
 import com.gdu.wacdo.exceptions.ResourceNotFoundException;
+import com.gdu.wacdo.factories.CollaboratorTestFactory;
 import com.gdu.wacdo.mappers.DTOMapper;
 import com.gdu.wacdo.repositories.CollaboratorRepository;
 import com.gdu.wacdo.services.CollaboratorService;
@@ -21,6 +23,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -172,6 +175,23 @@ class CollaboratorServiceTest {
                 .toCollaboratorResponseDTO(savedCollaborator);
     }
 
+    @Test
+    void create_shouldThrowException_whenEmailAlreadyExists() {
+
+        CollaboratorRequestDTO dto = CollaboratorTestFactory.createGenericCollaboratorRequestDTO();
+
+        when(collaboratorRepository.existsByEmail(dto.getEmail()))
+                .thenReturn(true);
+
+        assertThrows(
+                ResourceAlreadyExistsException.class,
+                () -> collaboratorService.create(dto)
+        );
+
+        verify(collaboratorRepository).existsByEmail(dto.getEmail());
+        verify(collaboratorRepository, never()).save(any());
+    }
+
     // UPDATE
     @Test
     void update_shouldUpdateCollaborator() {
@@ -220,6 +240,28 @@ class CollaboratorServiceTest {
 
         verify(dtoMapper)
                 .toCollaboratorResponseDTO(collaborator);
+    }
+
+    @Test
+    void update_shouldThrowException_whenEmailAlreadyExistsForAnotherCollaborator() {
+
+        Long id = 1L;
+        CollaboratorRequestDTO dto = CollaboratorTestFactory.createGenericCollaboratorRequestDTO();
+
+        when(collaboratorRepository.existsByEmailAndIdNot(
+                dto.getEmail(),
+                id
+        )).thenReturn(true);
+
+        assertThrows(
+                ResourceAlreadyExistsException.class,
+                () -> collaboratorService.update(id, dto)
+        );
+
+        verify(collaboratorRepository)
+                .existsByEmailAndIdNot(dto.getEmail(), id);
+
+        verify(collaboratorRepository, never()).save(any());
     }
 
     // DELETE
