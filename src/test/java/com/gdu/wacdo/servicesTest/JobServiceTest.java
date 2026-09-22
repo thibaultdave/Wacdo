@@ -42,10 +42,8 @@ public class JobServiceTest {
     @Test
     void findJobById_shouldReturnJob_whenIdExists() {
         // Arrange
-        Long id = 1L;
-
         Job job = new Job();
-        job.setId(id);
+        Long id = job.getId();
 
         when(jobRepository.findById(id))
                 .thenReturn(Optional.of(job));

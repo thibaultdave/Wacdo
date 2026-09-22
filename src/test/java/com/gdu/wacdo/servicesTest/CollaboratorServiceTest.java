@@ -12,6 +12,9 @@ import com.gdu.wacdo.services.CollaboratorService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
@@ -23,6 +26,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
@@ -59,10 +63,8 @@ class CollaboratorServiceTest {
     void findCollaboratorById_shouldReturnCollaborator_whenIdExists() {
 
         // Arrange
-        Long id = 1L;
-
-        Collaborator collaborator = new Collaborator();
-        collaborator.setId(id);
+        Collaborator collaborator = CollaboratorTestFactory.createGenericCollaborator();
+        Long id = collaborator.getId();
 
         when(collaboratorRepository.findById(id))
                 .thenReturn(Optional.of(collaborator));
@@ -94,11 +96,9 @@ class CollaboratorServiceTest {
     void findAll_shouldReturnAllCollaborators() {
 
         // Arrange
-        Collaborator collaborator1 = new Collaborator();
-        collaborator1.setId(1L);
+        Collaborator collaborator1 = CollaboratorTestFactory.createGenericCollaborator();
 
-        Collaborator collaborator2 = new Collaborator();
-        collaborator2.setId(2L);
+        Collaborator collaborator2 = CollaboratorTestFactory.createUpdatedCollaborator();
 
         CollaboratorResponseDTO response1 = new CollaboratorResponseDTO();
         CollaboratorResponseDTO response2 = new CollaboratorResponseDTO();
@@ -131,20 +131,14 @@ class CollaboratorServiceTest {
         assertThat(result)
                 .isEmpty();
     }
-//TODO use factory
+
     // CREATE
     @Test
     void create_shouldCreateCollaborator() {
 
-        CollaboratorRequestDTO request = new CollaboratorRequestDTO();
-
-        request.setName("Doe");
-        request.setFirstName("John");
-        request.setEmail("john.doe@test.com");
-        request.setPassword("password123");
+        CollaboratorRequestDTO request = CollaboratorTestFactory.createGenericCollaboratorRequestDTO();
 
         Collaborator savedCollaborator = new Collaborator();
-        savedCollaborator.setId(1L);
 
         CollaboratorResponseDTO response = new CollaboratorResponseDTO();
 
@@ -196,16 +190,10 @@ class CollaboratorServiceTest {
     @Test
     void update_shouldUpdateCollaborator() {
 
-        Long id = 1L;
-
-        CollaboratorRequestDTO request = new CollaboratorRequestDTO();
-        request.setName("Doe");
-        request.setFirstName("John");
-        request.setEmail("john.doe@test.com");
-        request.setPassword("newPassword123");
+        CollaboratorRequestDTO request = CollaboratorTestFactory.createGenericCollaboratorRequestDTO();
 
         Collaborator collaborator = new Collaborator();
-        collaborator.setId(id);
+        Long id = collaborator.getId();
 
         CollaboratorResponseDTO response = new CollaboratorResponseDTO();
 
@@ -262,6 +250,37 @@ class CollaboratorServiceTest {
                 .existsByEmailAndIdNot(dto.getEmail(), id);
 
         verify(collaboratorRepository, never()).save(any());
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {"   "})
+    void update_shouldNotEncodePassword_whenPasswordIsNullOrBlank(String password) {
+
+        Collaborator collaborator = CollaboratorTestFactory.createGenericCollaborator();
+        Long id = collaborator.getId();
+        String originalPassword = collaborator.getPassword();
+
+        CollaboratorRequestDTO dto = CollaboratorTestFactory.createGenericCollaboratorRequestDTO();
+
+        dto.setPassword(password);
+
+        when(collaboratorRepository.findById(id))
+                .thenReturn(Optional.of(collaborator));
+
+        when(collaboratorRepository.existsByEmailAndIdNot(
+                dto.getEmail(),
+                id
+        )).thenReturn(false);
+
+        when(collaboratorRepository.save(any(Collaborator.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        collaboratorService.update(id, dto);
+
+        verify(passwordEncoder, never()).encode(any());
+
+        assertEquals(originalPassword, collaborator.getPassword());
     }
 
     // DELETE
