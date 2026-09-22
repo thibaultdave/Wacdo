@@ -258,8 +258,7 @@ class JwtAuthenticationFilterTest {
                 .getContext()
                 .setAuthentication(existingAuthentication);
 
-        MockHttpServletRequest request =
-                new MockHttpServletRequest();
+        MockHttpServletRequest request = new MockHttpServletRequest();
 
         request.addHeader(
                 "Authorization",
