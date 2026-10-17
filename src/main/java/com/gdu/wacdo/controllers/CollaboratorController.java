@@ -3,8 +3,10 @@ package com.gdu.wacdo.controllers;
 import com.gdu.wacdo.dto.CollaboratorRequestDTO;
 import com.gdu.wacdo.dto.CollaboratorResponseDTO;
 import com.gdu.wacdo.services.CollaboratorService;
+import com.gdu.wacdo.validations.OnCreate;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,7 +33,7 @@ public class CollaboratorController {
     }
 
     @PostMapping
-    public CollaboratorResponseDTO create(@Valid @RequestBody CollaboratorRequestDTO dto) {
+    public CollaboratorResponseDTO create(@Validated(OnCreate.class) @RequestBody CollaboratorRequestDTO dto) {
         return collaboratorService.create(dto);
     }
 

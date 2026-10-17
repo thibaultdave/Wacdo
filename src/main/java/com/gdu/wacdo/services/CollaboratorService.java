@@ -109,14 +109,18 @@ public class CollaboratorService {
     }
 
     private Collaborator setCollaboratorFromRequest(Collaborator collaborator, CollaboratorRequestDTO dto) {
+
+        String currentPassword = collaborator.getPassword();
+
         modelMapper.map(dto, collaborator);
 
-        if (dto.getPassword() != null
-                && !dto.getPassword().isBlank()) {
+        if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
 
             collaborator.setPassword(
                     passwordEncoder.encode(dto.getPassword())
             );
+        } else {
+            collaborator.setPassword(currentPassword);
         }
 
         return collaborator;

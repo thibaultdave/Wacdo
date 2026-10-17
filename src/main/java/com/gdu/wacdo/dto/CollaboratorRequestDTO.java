@@ -1,5 +1,6 @@
 package com.gdu.wacdo.dto;
 
+import com.gdu.wacdo.validations.OnCreate;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
@@ -23,7 +24,10 @@ public class CollaboratorRequestDTO {
 
     private boolean admin;
 
-    @NotBlank(message = "{validation.collaborator.password.not-blank}")
+    @NotBlank(
+            message = "{validation.collaborator.password.not-blank}",
+            groups = OnCreate.class
+    )
     @Size(
             min = 8,
             message = "{validation.collaborator.password.size}"
