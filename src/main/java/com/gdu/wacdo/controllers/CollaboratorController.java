@@ -6,6 +6,7 @@ import com.gdu.wacdo.services.CollaboratorService;
 import com.gdu.wacdo.validations.OnCreate;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,6 +31,12 @@ public class CollaboratorController {
     @GetMapping("/{id}")
     public CollaboratorResponseDTO findById(@PathVariable Long id) {
         return collaboratorService.findById(id);
+    }
+
+    @GetMapping("/me")
+    @SecurityRequirement()
+    public CollaboratorResponseDTO getCurrentCollaborator(Authentication authentication) {
+        return collaboratorService.getByEmail(authentication.getName());
     }
 
     @PostMapping

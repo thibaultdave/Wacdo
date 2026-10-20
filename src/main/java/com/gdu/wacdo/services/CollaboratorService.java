@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CollaboratorService {
@@ -50,6 +51,16 @@ public class CollaboratorService {
 
     public CollaboratorResponseDTO findById(Long id) {
         return toResponseDTO(findCollaboratorById(id));
+    }
+
+    public CollaboratorResponseDTO getByEmail(String email) {
+        Collaborator collaborator =  collaboratorRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "error.collaborator.email-not-found",
+                        email
+                ));
+
+        return toResponseDTO(collaborator);
     }
 
     public CollaboratorResponseDTO create(CollaboratorRequestDTO dto) {

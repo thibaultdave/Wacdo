@@ -5,6 +5,7 @@ import com.gdu.wacdo.securities.AccessDeniedHandlerImpl;
 import com.gdu.wacdo.securities.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -66,6 +67,7 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**"
                         ).permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/collaborators/me").authenticated()
                         .anyRequest().hasRole(CollaboratorRoles.ADMIN_ROLE)
                 )
                 .exceptionHandling(exception -> exception
@@ -88,9 +90,10 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(
                 List.of("http://localhost:4200")
         );
+        // TODO change to env variable
 
         configuration.setAllowedMethods(
-                List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                List.of("GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS")
         );
 
         configuration.setAllowedHeaders(
