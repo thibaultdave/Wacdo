@@ -22,9 +22,7 @@ public class AssignmentRequestDTO {
     private Long jobId;
 
     @NotNull(message = "{validation.assignment.start-date.not-null}")
-
     private LocalDate startDate;
-
 
     private LocalDate endDate;
 }
