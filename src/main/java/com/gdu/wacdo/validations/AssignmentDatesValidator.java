@@ -1,7 +1,6 @@
-package com.gdu.wacdo.validation;
+package com.gdu.wacdo.validations;
 
 import com.gdu.wacdo.dto.AssignmentRequestDTO;
-import com.gdu.wacdo.validations.ValidAssignmentDates;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
