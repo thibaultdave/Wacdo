@@ -24,9 +24,8 @@ public class CustomUserDetailsService implements UserDetailsService {
             throws UsernameNotFoundException {
 
         Collaborator collaborator = collaboratorRepository.findByEmail(email)
-                        .orElseThrow(() -> new ResourceNotFoundException(
-                                "error.collaborator.email-not-found",
-                                email
+                        .orElseThrow(() -> new UsernameNotFoundException(
+                                "error.auth.invalid-credentials"
                         ));
 
         String role = collaborator.isAdmin()
