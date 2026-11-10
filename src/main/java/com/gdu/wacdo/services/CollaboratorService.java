@@ -63,6 +63,10 @@ public class CollaboratorService {
         return toResponseDTO(collaborator);
     }
 
+    public boolean emailExists(String email) {
+        return collaboratorRepository.existsByEmail(email);
+    }
+
     public CollaboratorResponseDTO create(CollaboratorRequestDTO dto) {
 
         if (collaboratorRepository.existsByEmail(dto.getEmail())) {

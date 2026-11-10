@@ -6,6 +6,7 @@ import com.gdu.wacdo.services.CollaboratorService;
 import com.gdu.wacdo.validations.OnCreate;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -37,6 +38,11 @@ public class CollaboratorController {
     @SecurityRequirement()
     public CollaboratorResponseDTO getCurrentCollaborator(Authentication authentication) {
         return collaboratorService.getByEmail(authentication.getName());
+    }
+
+    @GetMapping("/email-exists")
+    public ResponseEntity<Boolean> emailExists(@RequestParam String email) {
+        return ResponseEntity.ok(collaboratorService.emailExists(email));
     }
 
     @PostMapping
