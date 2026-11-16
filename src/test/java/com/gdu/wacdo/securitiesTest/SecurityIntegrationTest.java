@@ -3,18 +3,23 @@ package com.gdu.wacdo.securitiesTest;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gdu.wacdo.config.TestConfiguration;
+import com.gdu.wacdo.dto.ErrorResponseDTO;
 import com.gdu.wacdo.dto.LoginRequestDTO;
 import com.gdu.wacdo.entities.Collaborator;
 import com.gdu.wacdo.factories.CollaboratorTestFactory;
 import com.gdu.wacdo.factories.LoginTestFactory;
 import com.gdu.wacdo.repositories.CollaboratorRepository;
 import com.gdu.wacdo.securities.JwtService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -25,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -173,5 +179,26 @@ class SecurityIntegrationTest {
                                 .header("Authorization", "Bearer " + token)
                 )
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void login_shouldReturn401_whenPasswordIsIncorrect() throws Exception {
+
+        Collaborator collaborator = CollaboratorTestFactory.createUpdatedCollaborator();
+        collaborator.setPassword(
+                passwordEncoder.encode(collaborator.getPassword())
+        );
+        collaboratorRepository.save(collaborator);
+
+        LoginRequestDTO loginRequest = LoginTestFactory.createAdminLoginRequestDTO();
+        loginRequest.setPassword("wrong-password");
+
+        mockMvc.perform(
+                        post("/auth/login")
+                                .contentType(APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(loginRequest))
+                )
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.message").value("Incorrect email or password."));
     }
 }
