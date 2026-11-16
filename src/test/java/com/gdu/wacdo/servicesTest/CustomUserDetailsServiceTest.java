@@ -1,6 +1,5 @@
 package com.gdu.wacdo.servicesTest;
 
-import com.gdu.wacdo.exceptions.ResourceNotFoundException;
 import com.gdu.wacdo.repositories.CollaboratorRepository;
 import com.gdu.wacdo.services.CustomUserDetailsService;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Optional;
@@ -37,13 +37,13 @@ public class CustomUserDetailsServiceTest {
         when(collaboratorRepository.findByEmail(email))
                 .thenReturn(Optional.empty());
 
-        ResourceNotFoundException exception = assertThrows(
-                ResourceNotFoundException.class,
+        UsernameNotFoundException exception = assertThrows(
+                UsernameNotFoundException.class,
                 () -> userDetailsService.loadUserByUsername(email)
         );
 
         assertEquals(
-                "error.collaborator.email-not-found",
+                "error.auth.invalid-credentials",
                 exception.getMessage()
         );
 
