@@ -297,4 +297,51 @@ class JwtAuthenticationFilterTest {
 
         verify(filterChain).doFilter(request, response);
     }
+
+    @Test
+    void doFilter_shouldContinueChain_whenTokenIsInvalid() throws Exception {
+
+        String token = "invalid-token";
+        String email = "jean.dupont@test.com";
+
+        UserDetails userDetails = User
+                .withUsername(email)
+                .password("password")
+                .roles("USER")
+                .build();
+
+        MockHttpServletRequest request = new MockHttpServletRequest();
+
+        request.addHeader(
+                "Authorization",
+                "Bearer " + token
+        );
+
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        when(jwtService.extractEmail(token))
+                .thenReturn(email);
+
+        when(userDetailsService.loadUserByUsername(email))
+                .thenReturn(userDetails);
+
+        when(jwtService.isTokenValid(token, userDetails))
+                .thenReturn(false);
+
+        filter.doFilter(
+                request,
+                response,
+                filterChain
+        );
+
+        assertNull(
+                SecurityContextHolder
+                        .getContext()
+                        .getAuthentication()
+        );
+
+        verify(jwtService).isTokenValid(token, userDetails);
+
+        verify(filterChain).doFilter(request, response);
+    }
 }
