@@ -27,8 +27,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -236,5 +235,58 @@ class CollaboratorControllerIntegrationTest {
         Optional<Collaborator> deletedCollaborator = collaboratorRepository.findById(id);
 
         assertTrue(deletedCollaborator.isEmpty());
+    }
+
+    // GET CURRENT COLLABORATOR
+    @Test
+    @WithMockUser(
+            username = "jean.dupont@test.com",
+            roles = CollaboratorRoles.USER_ROLE
+    )
+    void getCurrentCollaborator_shouldReturnCurrentCollaborator() throws Exception {
+
+        Collaborator collaborator = collaboratorRepository.save(
+                CollaboratorTestFactory.createGenericCollaborator()
+        );
+
+        mockMvc.perform(get("/api/collaborators/me"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(collaborator.getId()))
+                .andExpect(jsonPath("$.name").value("Dupont"))
+                .andExpect(jsonPath("$.firstName").value("Jean"))
+                .andExpect(jsonPath("$.email").value("jean.dupont@test.com"));
+    }
+
+    // EMAIL EXISTS
+    @Test
+    @WithMockUser(roles = CollaboratorRoles.ADMIN_ROLE)
+    void emailExists_shouldReturnTrue_whenEmailExists() throws Exception {
+
+        // Given
+        Collaborator collaborator = collaboratorRepository.save(
+                CollaboratorTestFactory.createGenericCollaborator()
+        );
+
+        // When & Then
+        mockMvc.perform(
+                        get("/api/collaborators/email-exists")
+                                .param("email", collaborator.getEmail())
+                )
+                .andExpect(status().isOk())
+                .andExpect(content().string("true"));
+    }
+
+    @Test
+    @WithMockUser(roles = CollaboratorRoles.ADMIN_ROLE)
+    void emailExists_shouldReturnFalse_whenEmailDoesNotExist() throws Exception {
+
+        String email = "unknown@test.com";
+
+        mockMvc.perform(
+                        get("/api/collaborators/email-exists")
+                                .param("email", email)
+                )
+                .andExpect(status().isOk())
+                .andExpect(content().string("false"));
     }
 }

@@ -33,9 +33,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(CollaboratorController.class)
 @ActiveProfiles("test")
@@ -62,6 +61,8 @@ class CollaboratorControllerTest {
         return Stream.of(
                 Arguments.of("GET", "/api/collaborators"),
                 Arguments.of("GET", "/api/collaborators/1"),
+                Arguments.of("GET", "/api/collaborators/me"),
+                Arguments.of("GET", "/api/collaborators/email-exists?email=test@test.com"),
                 Arguments.of("POST", "/api/collaborators"),
                 Arguments.of("PUT", "/api/collaborators/1"),
                 Arguments.of("DELETE", "/api/collaborators/1")
@@ -406,5 +407,62 @@ class CollaboratorControllerTest {
                 .andExpect(jsonPath("$.status").value(status))
                 .andExpect(jsonPath("$.message")
                         .value("No collaborator found with id: " + 99 + "."));
+    }
+
+    // GET CURRENT COLLABORATOR
+    @Test
+    @WithMockUser(
+            username = "jean.dupont@test.com",
+            roles = CollaboratorRoles.ADMIN_ROLE
+    )
+    void getCurrentCollaborator_shouldReturn200() throws Exception {
+
+        when(collaboratorService.getByEmail("jean.dupont@test.com"))
+                .thenReturn(createGenericCollaboratorResponseDTO());
+
+        mockMvc.perform(get("/api/collaborators/me"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.email").value("jean.dupont@test.com"));
+
+        verify(collaboratorService).getByEmail("jean.dupont@test.com");
+    }
+
+    // EMAIL EXISTS
+    @Test
+    @WithMockUser(roles = CollaboratorRoles.ADMIN_ROLE)
+    void emailExists_shouldReturnTrue_whenEmailExists() throws Exception {
+
+        String email = "jean.dupont@test.com";
+
+        when(collaboratorService.emailExists(email))
+                .thenReturn(true);
+
+        mockMvc.perform(
+                        get("/api/collaborators/email-exists")
+                                .param("email", email)
+                )
+                .andExpect(status().isOk())
+                .andExpect(content().string("true"));
+
+        verify(collaboratorService).emailExists(email);
+    }
+
+    @Test
+    @WithMockUser(roles = CollaboratorRoles.ADMIN_ROLE)
+    void emailExists_shouldReturnFalse_whenEmailDoesNotExist() throws Exception {
+
+        String email = "unknown@test.com";
+
+        when(collaboratorService.emailExists(email))
+                .thenReturn(false);
+
+        mockMvc.perform(
+                        get("/api/collaborators/email-exists")
+                                .param("email", email)
+                )
+                .andExpect(status().isOk())
+                .andExpect(content().string("false"));
+
+        verify(collaboratorService).emailExists(email);
     }
 }
