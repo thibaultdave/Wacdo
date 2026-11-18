@@ -320,4 +320,18 @@ class CollaboratorServiceTest {
         verify(collaboratorRepository, never())
                 .deleteById(id);
     }
+
+    // EMAIL EXISTS
+    @Test
+    void getByEmail_shouldThrowResourceNotFoundException_whenEmailDoesNotExist() {
+        String email = "unknown@test.com";
+
+        when(collaboratorRepository.findByEmail(email))
+                .thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class,
+                () -> collaboratorService.getByEmail(email));
+
+        verify(collaboratorRepository).findByEmail(email);
+    }
 }
