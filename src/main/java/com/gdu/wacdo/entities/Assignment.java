@@ -2,7 +2,6 @@ package com.gdu.wacdo.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PastOrPresent;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -24,9 +23,7 @@ public class Assignment {
     private Job job;
 
     @NotNull
-    @PastOrPresent
     private LocalDate startDate;
 
-    @PastOrPresent
     private LocalDate endDate;
 }
