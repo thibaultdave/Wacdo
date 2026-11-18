@@ -100,8 +100,6 @@ class CollaboratorControllerTest {
                 .andExpect(status().isOk());
     }
 
-    //TODO Add response test ?
-
     // FIND BY ID
     @Test
     @WithMockUser(roles = CollaboratorRoles.ADMIN_ROLE)
